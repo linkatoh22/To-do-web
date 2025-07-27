@@ -26,9 +26,9 @@ const logIn = async(req,res,next)=>{
         
         const accessToken = generateAccessToken(user)
         const refreshToken = generateRefreshToken(user)
-
+        
         await User.update(
-            { refreshToken: refreshToken },
+            { refresh_token: refreshToken },
             { where: { id: user.id } }
           );
         
@@ -105,22 +105,39 @@ const signUp =  async(req,res,next)=>{
 }
 const changePassword = async(req,res,next)=>{
     try{
-        const {email,password} = req.body;
-        if(!email || !password){
+        const {oldPassword,newPassword} = req.body;
+
+        if(!oldPassword || !newPassword){
             res.status(404);
             throw Error("Vui lòng nhập đủ tất cả trường")
         }
-        const hashedPassword = bcrypt.hash(password,10)
-        try{
-            await User.update(
-                { email: email },
-                { where: { password: hashedPassword } }
-            );
-        }
-        catch(error){
+
+        const userFind = req.user;
+
+        if(!userFind){
             res.status(400);
-            throw Error("Không tìm thấy người dùng")
+            throw Error("Phiên đăng nhập hết hạn")
         }
+        
+        const user = await User.findOne({where:{email:userFind.email}})
+
+        const validPassword = await bcrypt.compare(oldPassword,user.password)
+
+        if(!validPassword){
+            res.status(400);
+            throw Error("Mật khẩu không khớp");
+        }
+
+
+        const hashedPassword = bcrypt.hash(newPassword,10);
+
+        
+        await User.update(
+            { password: hashedPassword },
+            { where: { email: userFind.email } }
+        );
+
+    
         return res.status(200).json({
             status:"Success",
             code:200,
@@ -134,4 +151,4 @@ const changePassword = async(req,res,next)=>{
     }
     
 }
-module.exports = {signUp,logIn}
+module.exports = {signUp,logIn,changePassword}

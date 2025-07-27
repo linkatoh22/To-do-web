@@ -1,8 +1,10 @@
 const express = require("express")
 const router = express.Router();
-const {logIn,signUp} = require("../controllers/authenticateController")
-const {sendEmailVerify,verifyOTP,reSendOTP} = require("../controllers/emailController");
+const {logIn,signUp,changePassword} = require("../controllers/authenticateController")
+const {sendEmailVerify,verifyOTP,reSendOTP,sendPassLinkEmail,changePasswordWithToken} = require("../controllers/emailController");
 const { handleAccessToken } = require("../controllers/tokenControllers");
+const {AuthMiddleware} = require("../middlewares/authMiddleware")
+
 router.post("/log-in",logIn);
 router.post("/sign-up",signUp);
 
@@ -11,6 +13,10 @@ router.post("/verify-otp",verifyOTP);
 router.post("/resend-otp",reSendOTP);
 router.get("/handle-access-token",handleAccessToken);
 
+router.route("/change-password").put(AuthMiddleware,changePassword);
+
+router.post("/forget-password/send-link",sendPassLinkEmail)
+router.put("/forget-password/change-password/:token",changePasswordWithToken)
 
 
 module.exports = router;

@@ -2,7 +2,9 @@ const {transporter} = require("../configs/transporter")
 const bcrypt = require("bcrypt")
 const User  = require("../models/userModel")
 const otpVerify = require("../models/otpVerifyModel")
+const resetPassToken = require("../models/resetPassTokenModel")
 const crypto = require("crypto");
+const { Op } = require('sequelize');
 const sendEmailVerify = async ({email,userId},res,next)=>{
     const otp = `${Math.floor(1000+Math.random()*9000)}`
     const mailOptions = {
@@ -135,96 +137,110 @@ const reSendOTP = async (req,res,next)=>{
 }
 
 
-// const sendPassLinkEmail = async(req,res,next)=>{
-//     try{
-//         const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-//         console.log("sendResetLinkToEmail: ", fullUrl);
+const sendPassLinkEmail = async(req,res,next)=>{
+    try{
+        const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        console.log("sendResetLinkToEmail: ", fullUrl);
 
 
-//         const {email} = req.body;
-//         const user = await User.findOne({where:{email:email}});
+        const {email} = req.body;
+        const user = await User.findOne({where:{email:email}});
 
-//         if(!user){
-//             res.status(400)
-//             throw Error("Người dùng không tồn tại");
-//         }
+        if(!user){
+            res.status(400)
+            throw Error("Người dùng không tồn tại");
+        }
 
-//         const token = crypto.randomBytes(32).toString("hex");
-//         const tokenExpiry = Date.now()+3600000;
+        const token = crypto.randomBytes(32).toString("hex");
+        const tokenExpiry = Date.now()+3600000;
 
-//         const newUserResetToken = new ResetToken({ 
-//             email:email,
-//             userId:user._id,
-//             resetToken:token,
-//             resetTokenExpiry: tokenExpiry
-//         });
+        // await resetPassToken.destroy({
+        //     where: { userId: user.id }
+        // })
 
-//         await newUserResetToken.save();
-//         const resetUrl = `${process.env.ORIGIN}/reset-password/${token}`
-//         await transporter.sendMail({
-//             to:email,
-//             subject:"Đổi mật khẩu",
-//             html:`
-//                 <div>
-//                     Đây là link sử dụng để đổi mật khẩu của bạn:
-//                     <a href="${resetUrl}">Bấm vào để đổi mật khẩu</a>
-//                 </div>
-//             `
-//         });
 
-//         return res.status(200).json({
-//             status:"Success",
-//             code:200,
-//             message:"Email xác  nhận đã gửi",
-//         })
+        const newUserResetToken = await resetPassToken.create({
+            email:email,
+            userId:user.id,
+            resetToken:token,
+            resetTokenExpiry: tokenExpiry
+        })
+
+        
+        
+        const resetUrl = `${process.env.ORIGIN}/reset-password/${token}`
+
+        await transporter.sendMail({
+            to:email,
+            subject:"Đổi mật khẩu",
+            html:`
+                <div>
+                    Đây là link sử dụng để đổi mật khẩu của bạn:
+                    <a href="${resetUrl}">Bấm vào để đổi mật khẩu</a>
+                    
+                </div>
+            `
+        });
+
+        return res.status(200).json({
+            status:"Success",
+            code:200,
+            message:"Email xác  nhận đã gửi",
+            token: token
+        })
  
-//     }
-//     catch(error){
-//         next(error)
-//     }
-// }
+    }
+    catch(error){
+        next(error)
+    }
+}
 
 
-// const changePassword= async(req,res,next)=>{
-//     try{
+const changePasswordWithToken= async(req,res,next)=>{
+    try{
 
-//         const {token} = req.params;
-//         const {password} = req.body;
-//         const ResetTokenAvailable = await ResetToken.findOne({
-//             resetToken:token,
-//             resetTokenExpiry:{$gt:Date.now()}
-//         })
-
-//         if(!ResetTokenAvailable){
-//             res.status(400)
-//             throw Error("Link đã hết hạn...");
-//         }
+        const {token} = req.params;
+        const {password} = req.body;
         
-//         const hashedPassword = await bcrypt.hash(password,10);
+        const ResetTokenAvailable = await resetPassToken.findOne({
+            where:{
+                resetToken:token,
+                resetTokenExpiry: { [Op.gt]: Date.now() }
+            }
+        })
+
+        
+        if(!ResetTokenAvailable){
+            res.status(400)
+            throw Error("Link đã hết hạn...");
+        }
+        
+        const hashedPassword = await bcrypt.hash(password,10);
         
 
-//         await User.update(
-//                         { id:ResetTokenAvailable.userId },
-//                         { where: { password: hashedPassword } }
-//                     );
+        await User.update(
+                        { password: hashedPassword },
+                        { where: { id:ResetTokenAvailable.userId } }
+                    );
         
-//         await user.save();
-//         ResetTokenAvailable.resetTokenExpiry = Date.now();
-//         await ResetTokenAvailable.save();
+       await resetPassToken.update(
+            { resetTokenExpiry: Date.now() },
+            { where: { resetToken:token } })
+        
 
 
-//         return res.status(200).json({
-//             message:"Change Password Successfully",
-//             status:"Success",
-//             code:200,
+        return res.status(200).json({
+            message:"Change Password Successfully",
+            status:"Success",
+            code:200,
             
         
-//         });
+        });
 
-//     }
-//     catch(error){
-//         next(error)
-//     }
-// }
+    }
+    catch(error){
+        next(error)
+    }
+}
 
-module.exports = {sendEmailVerify,verifyOTP,reSendOTP}
+module.exports = {sendEmailVerify,verifyOTP,reSendOTP,sendPassLinkEmail,changePasswordWithToken}
