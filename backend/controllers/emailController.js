@@ -47,8 +47,7 @@ const verifyOTP = async (req,res,next)=>{
     try{
         
         const {userId,otp} = req.body;
-        console.log("userId: ",userId)
-        console.log("otp: ",otp)
+        
         if(!userId || !otp){
             res.status(400)
             throw new Error("Thiếu các trường cần thiết.")

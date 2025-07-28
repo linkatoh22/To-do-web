@@ -2,13 +2,24 @@ const express = require("express")
 require('dotenv').config();
 const pool = require("./configs/db")
 const cors = require("cors")
+
 const authenticateRoutes = require("./routes/AuthenticateRoute")
-const app = express();
-const port = process.env.PORT || 3000;
+const userRoutes = require("./routes/UserRoute")
+const taskRoutes = require("./routes/TaskRoute")
+const groupRoutes = require("./routes/GroupRoute")
+
+
 const errorHandler  = require("./middlewares/errorHandler")
 const cookieParser = require("cookie-parser");
 const sequelize = require("./configs/db");
 const User = require("./models/userModel");
+
+
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+
 require("./models"); // Thêm dòng này để thiết lập các quan hệ giữa các model
 //Connect to PostgreSQL
 (async()=>{
@@ -33,6 +44,10 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth",authenticateRoutes)
+app.use("/api/user",userRoutes)
+app.use("/api/task",taskRoutes)
+app.use("/api/group",groupRoutes)
+
 
 
 //Error handler
