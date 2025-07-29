@@ -1,6 +1,7 @@
 const Task = require("../models/taskModel")
 const Group = require("../models/groupModel")
-const User = require("../models/userModel")
+const User = require("../models/userModel");
+const sequelize = require("../configs/db");
 
 
 const createTask = async (req,res,next)=>{
@@ -161,23 +162,6 @@ const deleteTask = async (req,res,next)=>{
     }
 }
 
-// Lấy tất cả task theo groupId và userId
-const getTasksByGroupAndUser = async (req, res, next) => {
-    const { groupId } = req.params;
-    const userId = req.user.userId;
-    try {
-        const tasks = await Task.findAll({
-            where: { GroupId: groupId, userId: userId }
-        });
-        return res.status(200).json({
-            status: "Success",
-            code: 200,
-            data: tasks
-        });
-    } catch (error) {
-        next(error);
-    }
-};
 
 // Lấy chi tiết một task theo taskId
 const getTaskDetail = async (req, res, next) => {
@@ -204,12 +188,51 @@ const getTaskDetail = async (req, res, next) => {
     }
 };
 
-// Lấy tất cả task theo userId
+
+//DASHBOARD
+//API: Task that deadline are nearest.
+const getNearestDeadlineTasks = async (req,res,next)=>{
+    const userId = req.user.id;
+    try{
+        const tasks = await Task.findAll({
+            where:{
+                userId:userId,
+                EndDate:{[Task.sequelize.Op.not]:null}
+            },
+            include: [
+                {
+                    model: Group,
+                    attributes: ['Name'] // Chỉ lấy tên group
+                }
+            ],
+            order:[['EndDate','ASC']],
+            limit:10,
+        });
+
+        return res.status(200).json({
+            status: "Success",
+            code: 200,
+            data: tasks
+        })
+    }
+    catch(error){
+        next(error)
+    }
+}
+
+// API: All task of user
 const getTasksByUser = async (req, res, next) => {
     const userId = req.user.userId;
     try {
         const tasks = await Task.findAll({
-            where: { userId: userId }
+            where: { userId: userId },
+            include: [
+                {
+                    model: Group,
+                    attributes: ['Name'] // Chỉ lấy tên group
+                }
+            ],
+            order: [['createdAt', 'DESC']]
         });
         return res.status(200).json({
             status: "Success",
@@ -220,4 +243,163 @@ const getTasksByUser = async (req, res, next) => {
         next(error);
     }
 };
-module.exports = {createTask,updateTask,deleteTask}
+
+//API: Nearest Complete task
+const getNearestDeadlineComplete = async(req,res,next)=>{
+    const userId = req.user.id;
+    try{
+        const tasks = await Task.findAll({
+            where:{
+                userId:userId,
+                EndDate:{[Task.sequelize.Op.not]:null},
+                Status:"Hoàn thành"
+            },
+            include: [
+                {
+                    model: Group,
+                    attributes: ['Name'] // Chỉ lấy tên group
+                }
+            ],
+            order:[['EndDate','ASC']],
+            limit:2
+        })
+        return res.status(200).json({
+            status: "Success",
+            code: 200,
+            data: tasks
+        });
+    }
+    catch(error){
+        next(error)
+    }
+}
+
+
+// MY TASK
+//API: Get all of the task of user ( sort: (Deadline, Status, Priority) )
+const getAllTaskOfUser = async(req,res,next)=>{
+    const userId = req.user.id;
+    const {sortBy,status} = req.query;
+
+    let where = {userId};
+    if(status) where.Status = status;
+
+    let order=[]
+    
+    if(sortBy === 'deadline'){
+        order.push(['EndDate','ASC'])
+    }
+
+    if(sortBy === 'priorityASC'){
+        order.push([
+            sequelize.literal(`CASE
+                WHEN "Priority" = 'Thấp' THEN 1
+                WHEN "Priority" = 'Trung bình' THEN 2
+                WHEN "Priority" = 'Cao' THEN 3
+                ELSE 4 END `),'ASC'
+        ])
+    } 
+    else if (sortBy === 'priorityDESC'){
+        order.push([
+            sequelize.literal(`CASE
+                WHEN "Priority" = 'Thấp' THEN 1
+                WHEN "Priority" = 'Trung bình' THEN 2
+                WHEN "Priority" = 'Cao' THEN 3
+                ELSE 4 END `),'DESC'
+        ])
+
+    }
+
+    try{
+        const tasks = await Task.findAll({
+            where,
+            include: [
+                {
+                    model: Group,
+                    attributes: ['Name'] // Chỉ lấy tên group
+                }
+            ],
+            order
+        })
+        return res.status(200).json({
+            status: "Success",
+            code: 200,
+            data: tasks
+        })
+    }
+    catch(error){
+        next(error)
+    }
+}
+
+// TASK GROUP
+//API2: Get all the the task in the task group ( sort: (Deadline,Status,Priority) )
+const getAllTaskOfGroup = async(req,res,next)=>{
+    const userId = req.user.id;
+    const {sortBy,status,groupId} = req.query;
+
+    let where = {userId};
+    if(status) where.Status = status;
+    if(groupId) where.groupId = groupId;
+
+    let order=[]
+    
+    if(sortBy === 'deadline'){
+        order.push(['EndDate','ASC'])
+    }
+
+    if(sortBy === 'priorityASC'){
+        order.push([
+            sequelize.literal(`CASE
+                WHEN "Priority" = 'Thấp' THEN 1
+                WHEN "Priority" = 'Trung bình' THEN 2
+                WHEN "Priority" = 'Cao' THEN 3
+                ELSE 4 END `),'ASC'
+        ])
+    } 
+    else if (sortBy === 'priorityDESC'){
+        order.push([
+            sequelize.literal(`CASE
+                WHEN "Priority" = 'Thấp' THEN 1
+                WHEN "Priority" = 'Trung bình' THEN 2
+                WHEN "Priority" = 'Cao' THEN 3
+                ELSE 4 END `),'DESC'
+        ])
+
+    }
+
+    try{
+        const tasks = await Task.findAll({
+            where,
+            include: [
+                {
+                    model: Group,
+                    attributes: ['Name'] // Chỉ lấy tên group
+                }
+            ],
+            order
+        })
+        return res.status(200).json({
+            status: "Success",
+            code: 200,
+            data: tasks
+        })
+    }
+    catch(error){
+        next(error)
+    }
+}
+
+
+
+module.exports = {
+        createTask,
+        updateTask,
+        deleteTask,
+        getTaskDetail,
+        getTasksByUser,
+        getNearestDeadlineTasks,
+        getNearestDeadlineComplete,
+        getAllTaskOfUser,
+        getAllTaskOfGroup
+    }

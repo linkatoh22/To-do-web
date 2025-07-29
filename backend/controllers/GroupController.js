@@ -1,6 +1,24 @@
 const Group = require("../models/groupModel");
 const Task = require("../models/taskModel")
 
+
+const getGroupsByUser = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const groups = await Group.findAll({
+            where: { userId: userId }
+        });
+        return res.status(200).json({
+            status: "Success",
+            code: 200,
+            data: groups
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 const createGroup = async (req,res,next)=>{
     const {name,Description} =req.body;
     try{
@@ -130,4 +148,4 @@ const deleteGroup = async (req, res, next) => {
     }
 };
 
-module.exports = {createGroup,editGroup,deleteGroup}
+module.exports = {createGroup,editGroup,deleteGroup,getGroupsByUser,getGroupsByUser}

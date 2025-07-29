@@ -7,7 +7,7 @@ const authenticateRoutes = require("./routes/AuthenticateRoute")
 const userRoutes = require("./routes/UserRoute")
 const taskRoutes = require("./routes/TaskRoute")
 const groupRoutes = require("./routes/GroupRoute")
-
+const googleRoutes = require("./routes/GoogleAuthRoute")
 
 const errorHandler  = require("./middlewares/errorHandler")
 const cookieParser = require("cookie-parser");
@@ -47,6 +47,7 @@ app.use("/api/auth",authenticateRoutes)
 app.use("/api/user",userRoutes)
 app.use("/api/task",taskRoutes)
 app.use("/api/group",groupRoutes)
+app.use("/api/auth",googleRoutes)
 
 
 

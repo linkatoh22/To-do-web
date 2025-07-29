@@ -11,9 +11,17 @@ const Task = sequelize.define('Tasks',{
         type:DataTypes.STRING(255),
         allowNull:true,
     },
-    Priority:{
+    AdditionalNotes:{
         type:DataTypes.STRING(255),
-        allowNull:tru,
+        allowNull:true,
+    },
+    Priority:{
+        type: DataTypes.ENUM('Thấp','Trung bình','Cao'),
+        allowNull: true,
+    },
+    Status:{
+        type: DataTypes.ENUM("Chưa bắt đầu", "Đang làm","Hoàn thành"),
+        allowNull: true,
     },
     StartDate:{
         type:DataTypes.DATE,
