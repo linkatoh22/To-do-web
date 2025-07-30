@@ -1,6 +1,6 @@
 const Group = require("../models/groupModel");
 const Task = require("../models/taskModel")
-
+const cloudinary = require("../configs/cloudinary");
 
 const getGroupsByUser = async (req, res, next) => {
     try {
@@ -20,10 +20,10 @@ const getGroupsByUser = async (req, res, next) => {
 
 
 const createGroup = async (req,res,next)=>{
-    const {name,Description} =req.body;
+    const {Name,Description} =req.body;
     try{
         const userId = req.user.id;
-        if(!name){
+        if(!Name){
             res.status(400)
             throw Error("Vui lòng nhập name của Group")
         }
@@ -48,9 +48,9 @@ const createGroup = async (req,res,next)=>{
         }
 
         await Group.create({
-            Name:name,
+            Name:Name,
             Description:Description??null,
-            Pic:picUrl,
+            Pic:picUrl?? null,
             userId:userId
             
         })
@@ -68,11 +68,11 @@ const createGroup = async (req,res,next)=>{
 }
 
 const editGroup = async (req, res, next) => {
-    const { name, Description } = req.body;
+    const { Name, Description } = req.body;
     const { groupId } = req.params;
     try {
         const userId = req.user.id;
-        if (!name) {
+        if (!Name) {
             res.status(400);
             throw Error("Vui lòng nhập name của Group");
         }
@@ -97,7 +97,7 @@ const editGroup = async (req, res, next) => {
         }
 
         const updateData = {
-            Name: name,
+            Name: Name,
             Description: Description ?? null
         };
         if (picUrl) updateData.Pic = picUrl;
@@ -148,4 +148,27 @@ const deleteGroup = async (req, res, next) => {
     }
 };
 
-module.exports = {createGroup,editGroup,deleteGroup,getGroupsByUser,getGroupsByUser}
+const getGroupDetail = async (req, res, next) => {
+    const { groupId } = req.params;
+    const userId = req.user.id;
+    try {
+        console.log("groupId:  ",groupId)
+        console.log("userId:  ",userId)
+        const group = await Group.findOne({
+            where: { id: groupId, userId: userId }
+        });
+        if (!group) {
+            res.status(404);
+            throw Error("Không tìm thấy group");
+        }
+        return res.status(200).json({
+            status: "Success",
+            code: 200,
+            data: group
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = {createGroup,editGroup,deleteGroup,getGroupsByUser,getGroupsByUser,getGroupDetail}

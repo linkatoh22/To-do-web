@@ -2,28 +2,22 @@ const Task = require("../models/taskModel")
 const Group = require("../models/groupModel")
 const User = require("../models/userModel");
 const sequelize = require("../configs/db");
-
+const cloudinary =require("../configs/cloudinary")
+const { Op } = require("sequelize");
 
 const createTask = async (req,res,next)=>{
 
-    const {Name,Description,Priority,StartDate,EndDate,Pic,GroupId} = req.body;
+    const {Name,Description,Priority,Status,StartDate,EndDate,GroupId,AdditionalNotes} = req.body;
     
     try{
-        const userId = req.user.userId;
-        const user = await User.findOne({where:{id:userId}})
-
-        if(!user){
-            res.status(400)
-            throw Error("Lỗi xác thực...")
-        }
-
+        const userId = req.user.id;
         if(!Name){
             res.status(400)
             throw Error("Vui lòng nhập tên của task")
         }
 
         if(GroupId){
-            const group = await Group.findOne({where:{GroupId:GroupId}})
+            const group = await Group.findOne({where:{id:GroupId,userId:userId}})
             if(!group){
                 res.status(404)
                 throw Error("Không tìm thấy Group nào khớp với GroupId")
@@ -56,9 +50,10 @@ const createTask = async (req,res,next)=>{
             StartDate:StartDate?? null,
             EndDate:EndDate??null,
             Pic:picUrl,
-            GroupId:GroupId?? null,
-            Pic:result.secure_url,
-            userId:userId
+            groupId:GroupId?? null,
+            userId:userId,
+            AdditionalNotes:AdditionalNotes??null,
+            Status:Status?? null
         })
 
         return res.status(200).json({
@@ -77,9 +72,10 @@ const createTask = async (req,res,next)=>{
 
 const updateTask = async (req,res,next)=>{
     const {taskId} = req.params;
-    const {Name,Description,Priority,StartDate,EndDate,Pic,GroupId} = req.body;
+    const {Name,Description,Priority,StartDate,EndDate,GroupId,AdditionalNotes} = req.body;
     
     try{
+        const userId = req.user.id;
         if(!Name){
             res.status(400)
             throw Error("Vui lòng nhập tên của task")
@@ -108,25 +104,26 @@ const updateTask = async (req,res,next)=>{
 
 
         if(GroupId){
-            const group = await Group.findOne({where:{GroupId:GroupId}})
+            const group = await Group.findOne({where:{id:GroupId,userId:userId}})
             if(!group){
                 res.status(404)
                 throw Error("Không tìm thấy Group nào khớp với GroupId")
             }
         }
+        
          const updateData = {
             Name:Name,
             Description:Description??null,
             Priority: Priority?? null,
             StartDate:StartDate?? null,
             EndDate:EndDate??null,
-            Pic:Pic?? null,
-            GroupId:GroupId?? null,
+            groupId:GroupId?? null,
+            AdditionalNotes:AdditionalNotes??null
         };
         if (picUrl) updateData.Pic = picUrl;
 
 
-         await Task.update(updateData,{where:{id:taskId}})
+        await Task.update(updateData,{where:{id:taskId,userId:userId}})
 
         return res.status(200).json({
             status:"Success",
@@ -162,16 +159,14 @@ const deleteTask = async (req,res,next)=>{
     }
 }
 
-
-// Lấy chi tiết một task theo taskId
 const getTaskDetail = async (req, res, next) => {
     const { taskId } = req.params;
     try {
         const task = await Task.findOne({
             where: { id: taskId },
             include: [
-                { model: Group, attributes: ['id', 'Name'] },
-                { model: User, attributes: ['id', 'username', 'email'] }
+                { model: Group, attributes: ['id', 'Name','Description','Pic'] },
+                { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
             ]
         });
         if (!task) {
@@ -189,6 +184,7 @@ const getTaskDetail = async (req, res, next) => {
 };
 
 
+
 //DASHBOARD
 //API: Task that deadline are nearest.
 const getNearestDeadlineTasks = async (req,res,next)=>{
@@ -197,16 +193,14 @@ const getNearestDeadlineTasks = async (req,res,next)=>{
         const tasks = await Task.findAll({
             where:{
                 userId:userId,
-                EndDate:{[Task.sequelize.Op.not]:null}
+                EndDate:{[Op.not]:null}
             },
             include: [
-                {
-                    model: Group,
-                    attributes: ['Name'] // Chỉ lấy tên group
-                }
+                { model: Group, attributes: ['id', 'Name','Description','Pic'] },
+                { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
             ],
             order:[['EndDate','ASC']],
-            limit:10,
+            
         });
 
         return res.status(200).json({
@@ -222,15 +216,13 @@ const getNearestDeadlineTasks = async (req,res,next)=>{
 
 // API: All task of user
 const getTasksByUser = async (req, res, next) => {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     try {
         const tasks = await Task.findAll({
             where: { userId: userId },
             include: [
-                {
-                    model: Group,
-                    attributes: ['Name'] // Chỉ lấy tên group
-                }
+                { model: Group, attributes: ['id', 'Name','Description','Pic'] },
+                { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
             ],
             order: [['createdAt', 'DESC']]
         });
@@ -251,17 +243,14 @@ const getNearestDeadlineComplete = async(req,res,next)=>{
         const tasks = await Task.findAll({
             where:{
                 userId:userId,
-                EndDate:{[Task.sequelize.Op.not]:null},
+                EndDate:{[Op.not]:null},
                 Status:"Hoàn thành"
             },
             include: [
-                {
-                    model: Group,
-                    attributes: ['Name'] // Chỉ lấy tên group
-                }
+                { model: Group, attributes: ['id', 'Name','Description','Pic'] },
+                { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
             ],
-            order:[['EndDate','ASC']],
-            limit:2
+            order:[['EndDate','ASC']]
         })
         return res.status(200).json({
             status: "Success",
@@ -314,10 +303,8 @@ const getAllTaskOfUser = async(req,res,next)=>{
         const tasks = await Task.findAll({
             where,
             include: [
-                {
-                    model: Group,
-                    attributes: ['Name'] // Chỉ lấy tên group
-                }
+                { model: Group, attributes: ['id', 'Name','Description','Pic'] },
+                { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
             ],
             order
         })
@@ -372,10 +359,8 @@ const getAllTaskOfGroup = async(req,res,next)=>{
         const tasks = await Task.findAll({
             where,
             include: [
-                {
-                    model: Group,
-                    attributes: ['Name'] // Chỉ lấy tên group
-                }
+                { model: Group, attributes: ['id', 'Name','Description','Pic'] },
+                { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
             ],
             order
         })

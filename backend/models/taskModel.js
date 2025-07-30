@@ -3,7 +3,7 @@ const sequelize = require("../configs/db")
 
 
 const Task = sequelize.define('Tasks',{
-    name:{
+    Name:{
         type:DataTypes.STRING(255),
         allowNull:false,
     },

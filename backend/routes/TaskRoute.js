@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router();
 const {AuthMiddleware} = require("../middlewares/authMiddleware")
-
+const upload = require("../middlewares/upload")
 const {createTask,updateTask,
                 deleteTask,
                 getTaskDetail,
@@ -13,8 +13,9 @@ const {createTask,updateTask,
         } = require("../controllers/TaskController")
 
 
-router.route("/create-task").post(AuthMiddleware,createTask)
-router.route("/update-task/:taskId").put(AuthMiddleware,updateTask)
+
+router.route("/create-task").post(AuthMiddleware,upload.single("Pic"),createTask)
+router.route("/update-task/:taskId").put(AuthMiddleware,upload.single("Pic"),updateTask)
 router.route("/delete-task/:taskId").delete(AuthMiddleware,deleteTask)
 
 

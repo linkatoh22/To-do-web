@@ -10,7 +10,7 @@ const editProfile = async(req,res,next)=>{
 
         if(!first_name || !last_name || !username){
             res.status(404);
-            throw Error("Không tìm thấy người dùng")
+            throw Error("Vui lòng chọn đủ tất cả các trường")
 
         }
 
@@ -19,7 +19,7 @@ const editProfile = async(req,res,next)=>{
             const streamUpload = (buffer) => {
                 return new Promise((resolve, reject) => {
                     const stream = cloudinary.uploader.upload_stream(
-                        { resource_type: "image", folder: "Tasks" },
+                        { resource_type: "image", folder: "Users" },
                         (error, result) => {
                             if (result) resolve(result);
                             else reject(error);
@@ -33,20 +33,24 @@ const editProfile = async(req,res,next)=>{
             picUrl = result.secure_url;
         }
         const userId = req.user.id;
-        const user = await User.findOne({id:userId});
+        // const user = await User.findOne({where:{id:userId}});
 
-        if(!user)  {
-            res.status(404);
-            throw Error("Không tìm thấy người dùng")
-        }
+        // if(!user)  {
+        //     res.status(404);
+        //     throw Error("Không tìm thấy người dùng")
+        // }
 
-        await user.update(
-            {
+        
+        const updateData = {
                 first_name:first_name,
                 last_name:last_name,
                 username:username,
-                avatar:picUrl
-            },
+        }
+
+        if(picUrl) updateData.avatar = picUrl;
+
+        await User.update(
+            updateData,
             {
                 where:{id:userId}
             }
