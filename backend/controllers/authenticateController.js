@@ -91,6 +91,17 @@ const signUp =  async(req,res,next)=>{
 
             
         }
+        else {
+             await User.update({
+                first_name:firstName,
+                last_name: lastName,
+                username:username,
+                password:hashedPassword
+            },
+            {
+                where:{id:userAvailable.id}
+            })
+        }
         sendEmailVerify({email:email, userId: userAvailable.id},res)
 
         //Gọi gửi email

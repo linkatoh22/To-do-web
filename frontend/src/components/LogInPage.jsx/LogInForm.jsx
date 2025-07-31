@@ -7,6 +7,10 @@ import { GoogleSVG } from "../../assets/svg/googleSvg";
 import BadgeIcon from '@mui/icons-material/Badge';
 import { useState } from "react";
 
+import {fetchLogin} from "../../redux/thunk/authThunk";
+import { useDispatch,useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const LogInPicImg = styled.img`
     width:80%;
@@ -19,15 +23,16 @@ const GoogleIcon  = styled.div`
     cursor: pointer;
   
 `
-
+const BASE_URL = import.meta.env.VITE_BASE_URL_ORG;
 export function LogInForm() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
       })
     
-      const [showPassword, setShowPassword] = useState(false)
-      const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+      const { loading,error,accessToken } = useSelector(s => s.auth)
     
       const handleInputChange = (key,value) => {
         setFormData((prev) => ({
@@ -36,10 +41,28 @@ export function LogInForm() {
         }))
       }
     
-      const handleSubmit = (event) => {
-        event.preventDefault()
-        console.log(formData)
+      const handleSubmit = async (event) => {
+            event.preventDefault()
+
+            if (!formData.email || !formData.password) {
+                toast.error("Vui lòng điền đầy đủ thông tin");
+                return;
+            }
+
+            const response = await dispatch(fetchLogin({
+                email: formData.email,
+                password: formData.password }));
+
+            if (response.payload.status === "Success") {
+                toast.success("Đăng nhập thành công");
+            } else {
+                toast.error("Lỗi: " + response?.payload?.message);
+            }
         
+      }
+
+      const handleGoogleLogin = () => {
+        window.location.href = `${BASE_URL}/api/auth/google`;
       }
     return (
         <Box sx={{
@@ -203,7 +226,7 @@ export function LogInForm() {
                          }}> 
                          <div> Hoặc đăng nhập với </div> 
 
-                         <GoogleIcon>
+                         <GoogleIcon onClick = {()=>handleGoogleLogin()}>
                             <GoogleSVG></GoogleSVG>
                          
                          </GoogleIcon>

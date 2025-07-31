@@ -108,15 +108,15 @@ const verifyOTP = async (req,res,next)=>{
 const reSendOTP = async (req,res,next)=>{
 
     try{
-        const {email}  = req.body;
-
-        if(!email){
+        const {userId}  = req.body;
+        
+        if(!userId){
             
             res.status(400)
             throw Error("Vui lòng nhập đủ các trường.");
         }
         
-            const user = await User.findOne({where:{email:email}});
+            const user = await User.findOne({where:{id:userId,verified:false}});
 
             if (!user) {
                 res.status(404);
@@ -127,7 +127,7 @@ const reSendOTP = async (req,res,next)=>{
             //     where: { userId: user.id }
             // })
 
-            sendEmailVerify({email:email, userId: user.id},res)
+            sendEmailVerify({email:user.email, userId: user.id},res)
     }
     catch(error){
         next(error)

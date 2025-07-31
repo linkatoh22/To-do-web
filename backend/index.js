@@ -37,7 +37,14 @@ require("./models"); // Thêm dòng này để thiết lập các quan hệ gi�
 
 })();
 
-app.use(cors())
+// app.use(cors())
+
+app.use(cors({
+  origin: process.env.ORIGIN,
+  credentials: true
+}));
+
+
 app.use(express.json());
 app.use(cookieParser());
 

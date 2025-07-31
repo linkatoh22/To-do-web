@@ -5,18 +5,19 @@ import { Person, PersonOutline, AlternateEmail, Lock, Visibility, VisibilityOff 
 import LockOutlineIcon from '@mui/icons-material/LockOutline';
 import { toast } from "react-toastify";
 import BadgeIcon from '@mui/icons-material/Badge';
-import { useState } from "react";
-
-
+import { useEffect, useState } from "react";
+import { useSelector,useDispatch } from "react-redux";
+import { fetchSignUp } from "../../redux/thunk/authThunk";
+import { useNavigate } from "react-router-dom";
+import { generateOtpLink } from "../../utils/generateToken";
 const SignUpPicImg = styled.img`
     width:80%;
 `
-
-
-
-
-
 export function SignUpForm() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { loading,error,otpSent,userId } = useSelector(s => s.auth)
+    
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -36,7 +37,7 @@ export function SignUpForm() {
     }
 
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
         
         if(formData.password.trim() != formData.confirmPassword.trim()){
@@ -44,9 +45,29 @@ export function SignUpForm() {
             toast.error("Lỗi: Mật khẩu xác nhận không khớp.")
             return;
         }
+
+      
+        const response = await dispatch(fetchSignUp(formData));
+        if (response.payload.status === "Success") {
+             const newUserId = response.payload.userId;
+            toast.success("Đăng ký thành công!");
+            const tokenOtp = generateOtpLink(newUserId);
+            navigate(`/xac-thuc-otp/${tokenOtp}`);
+
+        } else {
+            console.error("Lỗi đăng ký:", response?.payload?.message);
+        }
+        
+
         
       }
-
+    
+    useEffect(() => {
+        document.body.style.cursor = loading ? "wait" : "default";
+        return () => {
+            document.body.style.cursor = "default";
+        };
+    }, [loading]);
 
     return (
         <Box sx={{
@@ -262,6 +283,7 @@ export function SignUpForm() {
                     }}>
 
                     <Button
+                        disabled={loading}
                         type="submit"
                         sx={{
                             

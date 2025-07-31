@@ -24,11 +24,11 @@ const googleCallback = async (req,res,next) =>{
             maxAge:7 * 24 * 60 * 60 * 1000,
         })
        
-        return res.status(200).json({status:"Success",
-            code:200,
-            message:"Đăng nhập thành công",
-            user})
-        // return res.redirect(`${process.env.ORIGIN}/google-success?accessToken=${accessToken}`);
+        // return res.status(200).json({status:"Success",
+        //     code:200,
+        //     message:"Đăng nhập thành công",
+        //     user})
+        return res.redirect(`${process.env.ORIGIN}/google-success?accessToken=${accessToken}`);
 
     }   
     catch(error){
