@@ -4,7 +4,7 @@ const {AuthMiddleware} = require("../middlewares/authMiddleware")
 
 const {logIn,signUp,changePassword} = require("../controllers/authenticateController")
 
-const {sendEmailVerify,verifyOTP,reSendOTP,sendPassLinkEmail,changePasswordWithToken} = require("../controllers/emailController");
+const {sendEmailVerify,verifyOTP,reSendOTP,sendPassLinkEmail,changePasswordWithToken,verifiedTokenLink} = require("../controllers/emailController");
 
 const { handleAccessToken } = require("../controllers/tokenControllers");
 
@@ -24,6 +24,8 @@ router.route("/change-password").put(AuthMiddleware,changePassword);
 
 router.post("/forget-password/send-link",sendPassLinkEmail)
 router.put("/forget-password/change-password/:token",changePasswordWithToken)
+
+router.get("/forget-password/verify-link/:token",verifiedTokenLink)
 
 
 module.exports = router;

@@ -1,7 +1,9 @@
 import styled from "styled-components";
 import backgroundImage from "../assets/pic/background.jpg";
-import { LogInForm } from "../components/LogInPage/LogInForm";
+
 import Box from "@mui/material/Box";
+import { ForgetPasswordForm } from "../components/ForgetPasswordPage/ForgetPasswordForm";
+
 const Container = styled.div`
     width: 100%;
     height: 100vh;
@@ -12,7 +14,7 @@ const Container = styled.div`
     background-attachment: fixed;
 `;
 
-export function LoginPage() {
+export function ForgetPasswordPage() {
     return (
 
         <Box sx={{
@@ -27,7 +29,7 @@ export function LoginPage() {
             justifyContent: "center",
             alignItems: "center",
         }}>
-           <LogInForm></LogInForm>
+           <ForgetPasswordForm></ForgetPasswordForm>
         </Box>
     
     )

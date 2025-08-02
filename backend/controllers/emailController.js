@@ -140,9 +140,8 @@ const sendPassLinkEmail = async(req,res,next)=>{
     try{
         const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         console.log("sendResetLinkToEmail: ", fullUrl);
-
-
         const {email} = req.body;
+        console.log("email: ",email)
         const user = await User.findOne({where:{email:email}});
 
         if(!user){
@@ -167,7 +166,7 @@ const sendPassLinkEmail = async(req,res,next)=>{
 
         
         
-        const resetUrl = `${process.env.ORIGIN}/reset-password/${token}`
+        const resetUrl = `${process.env.ORIGIN}/doi-mat-khau/${token}`
 
         await transporter.sendMail({
             to:email,
@@ -184,7 +183,7 @@ const sendPassLinkEmail = async(req,res,next)=>{
         return res.status(200).json({
             status:"Success",
             code:200,
-            message:"Email xác  nhận đã gửi",
+            message:"Email xác nhận đã gửi",
             token: token
         })
  
@@ -242,4 +241,33 @@ const changePasswordWithToken= async(req,res,next)=>{
     }
 }
 
-module.exports = {sendEmailVerify,verifyOTP,reSendOTP,sendPassLinkEmail,changePasswordWithToken}
+const verifiedTokenLink  = async(req,res,next)=>{
+    try{
+        const {token} = req.params;
+        const ResetTokenAvailable = await resetPassToken.findOne({
+            where:{
+                resetToken:token,
+                resetTokenExpiry: { [Op.gt]: Date.now() }
+            }
+        })
+
+        if(!ResetTokenAvailable){
+            res.status(400)
+            throw Error("Link đã hết hạn...");
+        }
+
+        return res.status(200).json({
+            message:"Link còn hạn.",
+            status:"Success",
+            code:200,
+            
+        });
+
+    }
+    catch(error){
+        next(error)
+    }
+
+}
+
+module.exports = {sendEmailVerify,verifyOTP,reSendOTP,sendPassLinkEmail,changePasswordWithToken,verifiedTokenLink}

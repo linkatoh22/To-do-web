@@ -7,7 +7,7 @@ const initialState = {
     emailSignUp:null,
 
     accessToken:null,
-
+    loading:false,
     otpSent: false,
     otpVerified: false,
     signUpSuccess: false,
