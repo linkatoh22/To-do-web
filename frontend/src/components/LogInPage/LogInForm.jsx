@@ -5,12 +5,13 @@ import { Person, PersonOutline, AlternateEmail, Lock, Visibility, VisibilityOff 
 import LockOutlineIcon from '@mui/icons-material/LockOutline';
 import { GoogleSVG } from "../../assets/svg/googleSvg";
 import BadgeIcon from '@mui/icons-material/Badge';
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import {fetchLogin} from "../../redux/thunk/authThunk";
 import { useDispatch,useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/authContext";
 
 const LogInPicImg = styled.img`
     width:80%;
@@ -25,6 +26,7 @@ const GoogleIcon  = styled.div`
 `
 const BASE_URL = import.meta.env.VITE_BASE_URL_ORG;
 export function LogInForm() {
+    const {login} = useContext(AuthContext);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -55,6 +57,9 @@ export function LogInForm() {
 
             if (response.payload.status === "Success") {
                 toast.success("Đăng nhập thành công");
+                login(response.payload.token.accessToken);
+                navigate("/");
+
             } else {
                 toast.error("Lỗi: " + response?.payload?.message);
             }
@@ -64,6 +69,8 @@ export function LogInForm() {
       const handleGoogleLogin = () => {
         window.location.href = `${BASE_URL}/api/auth/google`;
       }
+
+
     return (
         <Box sx={{
             width: { xs: "70%", sm: "70%", md: "60%",lg: "60%" },
