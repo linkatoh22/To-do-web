@@ -11,7 +11,10 @@ import { OtpVerify } from './pages//OtpVerify'
 import GoogleSuccessPage from './pages/GoogleSuccessPage'
 import { ForgetPasswordPage } from './pages/ForgetPasswordPage'
 import { ChangePasswordPage } from './pages/ChangePasswordPage'
+import { GroupPage } from './pages/GroupPage'
 import { HomePage } from './pages/Homepage'
+
+
 import { ThemeProvider } from "@mui/material/styles";
 import { ToastContainer } from "react-toastify";
 import theme from "./theme"; 
@@ -34,6 +37,7 @@ function App() {
                         <Route path="/" element={<RootLayout />}>
                           <Route element={<PrivateRoute/>}>
                             <Route path="/" element={<HomePage />} />
+                            <Route path="/group" element={<GroupPage />} />
                           </Route>
                         </Route>
                         
