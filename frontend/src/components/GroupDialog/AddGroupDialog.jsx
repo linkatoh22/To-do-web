@@ -60,19 +60,30 @@ export function AddGroupDialog({open,onClose}){
     const [dragOver, setDragOver] = useState(false)
 
     const handleDragOver = (e) => {
-    e.preventDefault()
-    setDragOver(true)
-  }
+        e.preventDefault()
+        setDragOver(true)
+    }
 
   const handleDragLeave = (e) => {
     e.preventDefault()
     setDragOver(false)
   }
 
+
+  const handleFileSelect = (file) => {
+        setFormData((prev) => ({
+            ...prev,
+            image: file
+        }));
+    };
+
+
+
   const handleDrop = (e) => {
     e.preventDefault()
     setDragOver(false)
     
+
     const files = Array.from(e.dataTransfer.files)
     if (files.length > 0) {
       handleFileSelect(files[0])
@@ -80,11 +91,12 @@ export function AddGroupDialog({open,onClose}){
   }
 
   const handleFileInputChange = (e) => {
-    const files = e.target.files
-    if (files && files.length > 0) {
-      handleFileSelect(files[0])
-    }
+  const files = e.target.files;
+  if (files && files.length > 0) {
+    handleFileSelect(files[0]);
   }
+};
+    
 
      const handleInputChange = (key,value) => {
         setFormData((prev) => ({
@@ -96,10 +108,7 @@ export function AddGroupDialog({open,onClose}){
     const handleSubmit = async (event) => {
         event.preventDefault()
         console.log(formData)
-        if (formData.endDate.isSame(formData.startDate) || formData.endDate.isBefore(formData.startDate)) {
-            toast.error("Ngày kết thúc phải sau ngày bắt đầu");
-            return;
-        }
+        
     }
     return(
         <Dialog 
@@ -154,9 +163,8 @@ export function AddGroupDialog({open,onClose}){
 
                                 <Grid size={{ xs: 6, md: 6 }} >
                                     <Box sx={{ flex: 1 }}>
-                                        <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                                            Upload Image
-                                        </Typography>
+                                        <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Tải ảnh avatar:</Typography>
+
                                         <UploadArea
                                             className={dragOver ? 'drag-over' : ''}
                                             onDragOver={handleDragOver}
@@ -167,34 +175,34 @@ export function AddGroupDialog({open,onClose}){
                                         >
                                             <CloudUploadIcon sx={{ fontSize: 48, color: 'grey.400', mb: 1 }} />
                                             <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                                            Drag&Drop files here
+                                           Kéo và thả ảnh vào đây
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                            or
+                                            Hoặc
                                             </Typography>
                                             <Button 
                                             variant="outlined" 
                                             size="small"
                                             onClick={(e) => {
                                                 e.stopPropagation()
-                                                document.getElementById('file-input')?.click()
+                                                document.getElementById('upload-input')?.click()
                                             }}
                                             >
-                                            Browse
+                                            Tải file lên
                                             </Button>
+
                                             {formData.image && (
-                                            <Typography variant="caption" color="primary" sx={{ mt: 1 }}>
-                                                Selected: {formData.image.name}
+                                            <Typography variant="h6"  color="primary" sx={{ mt: 1 }}>
+                                                File đã nhận: {formData.image.name}
                                             </Typography>
                                             )}
                                         </UploadArea>
                                         <input
-                                            id="file-input"
                                             type="file"
-                                            accept="image/*"
-                                            style={{ display: 'none' }}
                                             onChange={handleFileInputChange}
-                                        />
+                                            style={{ display: "none" }}
+                                            id="upload-input"
+                                            />
                                         </Box>
 
                                 </Grid>
@@ -205,7 +213,7 @@ export function AddGroupDialog({open,onClose}){
                             <Grid container spacing={2} sx={{mt:2}}>
                                 <Grid item sx={{ xs: 12, md: 6 }}>
                                     <Button
-                                                        
+                                        onClick={onClose}   
                                                         sx={{
                                                             
                                                             px: {
@@ -259,7 +267,7 @@ export function AddGroupDialog({open,onClose}){
                                         }}
                                         variant="contained"
                                         >
-                                        Thêm TASK
+                                        Thêm Group
                                     </Button>
                                 </Grid>
 

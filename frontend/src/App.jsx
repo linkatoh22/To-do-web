@@ -13,7 +13,9 @@ import { ForgetPasswordPage } from './pages/ForgetPasswordPage'
 import { ChangePasswordPage } from './pages/ChangePasswordPage'
 import { GroupPage } from './pages/GroupPage'
 import { HomePage } from './pages/Homepage'
-
+import { AllTaskPage } from './pages/AllTaskPage'
+import { DetailTaskPage } from './pages/DetailTaskPage'
+import { UserDetailContainer } from './components/UserDetailPage/UserDetailContainer'
 
 import { ThemeProvider } from "@mui/material/styles";
 import { ToastContainer } from "react-toastify";
@@ -38,6 +40,9 @@ function App() {
                           <Route element={<PrivateRoute/>}>
                             <Route path="/" element={<HomePage />} />
                             <Route path="/group" element={<GroupPage />} />
+                            <Route path="/all-task" element={<AllTaskPage />} />
+                            <Route path="/detail-task" element={<DetailTaskPage />} />
+                            <Route path="/user" element={<UserDetailContainer />} />
                           </Route>
                         </Route>
                         

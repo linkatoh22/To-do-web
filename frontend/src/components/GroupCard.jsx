@@ -23,7 +23,8 @@ import {
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import TripOriginIcon from '@mui/icons-material/TripOrigin';
-
+import { EditGroupDialog } from "./GroupDialog/EditGroupDialog";
+import { ViewDetailGroup } from "./GroupDialog/ViewDetailGroupDialog";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 export function GroupCard(){
@@ -41,13 +42,35 @@ export function GroupCard(){
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
+    
+
+
+    const [openViewDialog, setOpenViewDialog] = useState(false);
+    
+    const handleCloseViewDialog = () => {
+        setOpenViewDialog(false);
+    };
+
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+    }
+
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-    const handleClose = () => {
+    const handleClose = (type) => {
+        if (type === "edit") {
+            setOpenEditDialog(true)
+        }
+        else if (type === "view") {
+            setOpenViewDialog(true)
+        }
         setAnchorEl(null);
     };
     return(
+        <>
         <Card sx={{ maxWidth: 440,  "&:hover": {
           boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
         },
@@ -83,22 +106,22 @@ export function GroupCard(){
                         }}
                         anchorEl={anchorEl}
                         open={open}
-                        onClose={handleClose}
+                        onClose={()=>handleClose("none")}
                     >
-                        <MenuItem onClick={handleClose} disableRipple>
+                        <MenuItem onClick={()=>handleClose("view")} disableRipple>
                         {/* <EditIcon /> */}
                         Xem chi tiết
                         </MenuItem>
-                        <MenuItem onClick={handleClose} disableRipple>
+                        <MenuItem onClick={()=>handleClose("viewAll")} disableRipple>
                         {/* <FileCopyIcon /> */}
                         Xem danh sách
                         </MenuItem>
                         <Divider sx={{ my: 0.5 }} />
-                        <MenuItem onClick={handleClose} disableRipple>
+                        <MenuItem onClick={()=>handleClose("edit")} disableRipple>
                         {/* <ArchiveIcon /> */}
                         Sửa
                         </MenuItem>
-                        <MenuItem onClick={handleClose} disableRipple>
+                        <MenuItem onClick={()=>handleClose("delete")} disableRipple>
                         {/* <MoreHorizIcon /> */}
                         Xóa
                         </MenuItem>
@@ -125,6 +148,17 @@ export function GroupCard(){
                 )}
             </CardContent>
         </Card>
+
+        <EditGroupDialog
+            open={openEditDialog}
+            onClose={handleCloseEditDialog}
+        ></EditGroupDialog>
+
+        <ViewDetailGroup
+            open={openViewDialog}
+            onClose={handleCloseViewDialog}>
+        </ViewDetailGroup>
+        </>
 
     )
 }
