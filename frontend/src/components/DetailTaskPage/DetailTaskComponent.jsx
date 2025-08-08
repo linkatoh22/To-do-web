@@ -11,7 +11,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditDocumentIcon from '@mui/icons-material/EditDocument';
 
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-
+import { useParams } from "react-router-dom";
+import { fetchDetailTask } from "../../redux/thunk/taskThunk";
+import { useDispatch,useSelector } from "react-redux";
+import { useEffect } from "react";
 const ImageGroup = styled.img`
     width:20%; 
     aspect-ratio: 1 / 1;
@@ -19,6 +22,18 @@ const ImageGroup = styled.img`
      border-radius: 10px;
 `
 export function DetailTaskContainer(){
+    const {AllTask,TaskDetail} = useSelector(s=>s.task)
+    const {id}= useParams();
+    const dispatch = useDispatch()
+
+    useEffect(()=>{
+        console.log("TaskDetail: ",TaskDetail)
+    },[TaskDetail])
+    useEffect(()=>{
+        const fetchDetailTaskRender = async()=>{
+            await dispatch(fetchDetailTask({taskId:id}))
+        }
+    },[])
     return(
         <Box sx={{p:5}}>
                     <Box sx={{p:4, mt:2, borderRadius:3,border: "1px solid #A1A3ABA1",height:"73vh",overflowY:"auto",position:"relative"}}>

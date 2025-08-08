@@ -193,13 +193,15 @@ const getNearestDeadlineTasks = async (req,res,next)=>{
         const tasks = await Task.findAll({
             where:{
                 userId:userId,
-                EndDate:{[Op.not]:null}
+                EndDate:{[Op.not]:null},
+                Status: { [Op.ne]: "Hoàn thành" }
             },
             include: [
                 { model: Group, attributes: ['id', 'Name','Description','Pic'] },
                 { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
             ],
-            order:[['EndDate','ASC']],
+            order:[['EndDate','DESC']],
+            limit: 3
             
         });
 
@@ -217,19 +219,49 @@ const getNearestDeadlineTasks = async (req,res,next)=>{
 // API: All task of user
 const getTasksByUser = async (req, res, next) => {
     const userId = req.user.id;
+    
     try {
-        const tasks = await Task.findAll({
-            where: { userId: userId },
-            include: [
-                { model: Group, attributes: ['id', 'Name','Description','Pic'] },
-                { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
-            ],
-            order: [['createdAt', 'DESC']]
+        const countNotAll = await Task.count({
+            where: {
+                userId: userId,
+                Status: "Chưa bắt đầu"
+            }
         });
+
+
+        const countStarted = await Task.count({
+            where: {
+                userId: userId,
+                Status: "Chưa bắt đầu"
+            }
+        });
+
+        const countNotStarting = await Task.count({
+            where: {
+                userId: userId,
+                Status: "Đang làm"
+            }
+        });
+        
+
+        const countComplete = await Task.count({
+            where: {
+                userId: userId,
+                Status: "Hoàn thành"
+            }
+        });
+
+
         return res.status(200).json({
             status: "Success",
             code: 200,
-            data: tasks
+            data: {
+                countNotAll,
+                countNotStarting,
+                countStarted,
+                countComplete
+
+            }
         });
     } catch (error) {
         next(error);
@@ -250,7 +282,8 @@ const getNearestDeadlineComplete = async(req,res,next)=>{
                 { model: Group, attributes: ['id', 'Name','Description','Pic'] },
                 { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
             ],
-            order:[['EndDate','ASC']]
+            order:[['EndDate','ASC']],
+            limit: 2
         })
         return res.status(200).json({
             status: "Success",

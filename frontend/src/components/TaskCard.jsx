@@ -1,6 +1,8 @@
 import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
 import {
   Box,
   List,
@@ -23,7 +25,12 @@ CardMedia
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import TripOriginIcon from '@mui/icons-material/TripOrigin';
-export function TaskCard(){
+export function TaskCard({TaskData}){
+
+    const endDateStr = TaskData?.EndDate
+        ? dayjs(TaskData.EndDate).locale("vi").format("dddd, DD/MM/YYYY")
+        : "Chưa cập nhập";
+
     return(
         <Card sx={{p:2,border: "1px solid #A1A3AB",borderRadius:4,display:'flex',gap:"1rem",justifyContent:"center",
         "&:hover": {
@@ -35,18 +42,18 @@ export function TaskCard(){
 
             <Box sx={{display:'flex',flexDirection:"column", alignItems:"top",width:"90%",gap:"0.5rem"}}>
                     
-                    <Box sx={{display:"flex"}}>
+                    <Box sx={{display:"flex",justifyContent:"space-between"}}>
                         <Box>
                             
-                                <Typography variant="h6" sx={{fontWeight:"bold"}}>Attend Nischal’s Birthday Party</Typography>
-                                <Typography sx={{fontSize:"1.1rem",color:"var(--grey-600)",fontWeight:400}}>Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements).....</Typography>
+                                <Typography variant="h6" sx={{fontWeight:"bold"}}>{TaskData?.Name?? "Chưa cập nhập"}</Typography>
+                                <Typography sx={{fontSize:"1.1rem",color:"var(--grey-600)",fontWeight:400}}>{TaskData?.Description?? "Chưa cập nhập"}</Typography>
                             
                         </Box>
 
                         <CardMedia
                             component="img"
                             sx={{borderRadius:2,width:"20%", aspectRatio: "1 / 1", objectFit: "cover" }}
-                            image="https://mui.com/static/images/cards/live-from-space.jpg"
+                            image={TaskData?.Pic??"https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
                             alt="Live from space album cover"
                         />
                     </Box>
@@ -54,15 +61,15 @@ export function TaskCard(){
                     <Box sx={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
 
                         <Typography sx={{color:"#A1A3AB",fontSize:"0.8rem",display:"flex", alignItems:"center"}}>
-                            Priority: Moderate
+                           Độ ưu tiên: {TaskData?.Priority?? "Chưa cập nhập"}
                         </Typography>
 
                         <Typography sx={{color:"#A1A3AB",fontSize:"0.8rem",display:"flex", alignItems:"center"}}>
-                            Status: Not Started
+                           Trạng thái: {TaskData?.Status?? "Chưa cập nhập"}
                         </Typography>
 
                         <Typography sx={{color:"#A1A3AB",fontSize:"0.8rem",display:"flex", alignItems:"center"}}>
-                            Created on: 20/06/2023
+                            Deadline: {endDateStr}
                         </Typography>
                     </Box>
                 

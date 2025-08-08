@@ -27,15 +27,9 @@ import { EditGroupDialog } from "./GroupDialog/EditGroupDialog";
 import { ViewDetailGroup } from "./GroupDialog/ViewDetailGroupDialog";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-export function GroupCard(){
+export function GroupCard({groupData}){
     const [showMore, setShowMore] = useState(false);
-    const content = `Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-    medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
-    occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
-    large plate and set aside, leaving chicken and chorizo in the pan. Add
-    pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
-    stirring often until thickened and fragrant, about 10 minutes. Add
-    saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.`;
+    const content = groupData?.Description?? "Chưa cập nhập";
 
     const shortContent = content.slice(0, 120) + (content.length > 120 ? "..." : "");
 
@@ -71,15 +65,15 @@ export function GroupCard(){
     };
     return(
         <>
-        <Card sx={{ maxWidth: 440,  "&:hover": {
+        <Card sx={{ maxWidth: 400,  "&:hover": {
           boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
         },
         transition: "box-shadow 0.3s ease" }}>
             <CardMedia
                 component="img"
                 sx={{width:"100%", aspectRatio: "1 / 1", objectFit: "cover" }}
-                image="https://mui.com/static/images/cards/live-from-space.jpg"
-                alt="Live from space album cover"
+                image={groupData?.Pic??"https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
+                
             />
 
             <CardContent>
@@ -88,7 +82,7 @@ export function GroupCard(){
 
                     
                     <Typography variant="h9" sx={{fontWeight:600,width:"90%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-                        Heat 1/2 cup of the broth in a pot until simmering.
+                        {groupData?.Name??"Chưa cập nhập"}
                     </Typography>
 
                     <Box>
@@ -155,8 +149,10 @@ export function GroupCard(){
         ></EditGroupDialog>
 
         <ViewDetailGroup
+            groupDataDetail={groupData}
             open={openViewDialog}
             onClose={handleCloseViewDialog}>
+            
         </ViewDetailGroup>
         </>
 

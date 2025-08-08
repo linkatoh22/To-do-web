@@ -41,7 +41,7 @@ function App() {
                             <Route path="/" element={<HomePage />} />
                             <Route path="/group" element={<GroupPage />} />
                             <Route path="/all-task" element={<AllTaskPage />} />
-                            <Route path="/detail-task" element={<DetailTaskPage />} />
+                            <Route path="/detail-task/:id" element={<DetailTaskPage />} />
                             <Route path="/user" element={<UserDetailContainer />} />
                           </Route>
                         </Route>

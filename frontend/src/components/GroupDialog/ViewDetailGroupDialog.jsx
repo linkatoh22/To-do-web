@@ -29,7 +29,7 @@ import dayjs from "dayjs";
 import Textarea from '@mui/joy/Textarea';
 import styled from "styled-components"
 
-const ImgageGroup = styled.img`
+const ImageGroup = styled.img`
     width:100%; 
     aspect-ratio: 1 / 1;
      object-fit: cover;
@@ -37,17 +37,11 @@ const ImgageGroup = styled.img`
 
 
 
-export function ViewDetailGroup({open,onClose}){
+export function ViewDetailGroup({open,onClose,groupDataDetail}){
     
 
     const [showMore, setShowMore] = useState(false);
-    const content = `Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-    medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
-    occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
-    large plate and set aside, leaving chicken and chorizo in the pan. Add
-    pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
-    stirring often until thickened and fragrant, about 10 minutes. Add
-    saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.`;
+    const content = groupDataDetail?.Description?? "Chưa cập nhập";
 
     const shortContent = content.slice(0, 120) + (content.length > 120 ? "..." : "");
 
@@ -81,14 +75,14 @@ export function ViewDetailGroup({open,onClose}){
                    
                 <Box sx={{p:4, borderRadius:1,border: "1px solid #A1A3ABA1"}}>
                     <Grid container spacing={5}>
-                        <Grid item xs={12} md={6}>
-                            <ImgageGroup src="https://mui.com/static/images/cards/live-from-space.jpg" />
+                        <Grid item xs={12} md={6} sx={{maxWidth: 400}}>
+                            <ImageGroup src={groupDataDetail?.Pic??"https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"} />
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={6} sx={{maxWidth:500}}>
                             <Box >
                                 <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                                Heat 1/2 cup of the broth in a pot until simmering.
+                                    {groupDataDetail?.Name??"Chưa cập nhập"}
                                 </Typography>
 
                                 <Typography sx={{ mt: 1, whiteSpace: 'pre-line',fontSize: '1.2rem', color: '#555' }}>

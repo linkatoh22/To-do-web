@@ -43,7 +43,7 @@ const names = [
 ];
 
 
-export function AddDialog({open,onClose}){
+export function AddDialog({open,onClose,onCreate}){
     const [formData, setFormData] = useState({
             name: "",
             groupId: "",
@@ -69,6 +69,17 @@ export function AddDialog({open,onClose}){
             toast.error("Ngày kết thúc phải sau ngày bắt đầu");
             return;
         }
+
+        onCreate({
+            Name:formData.name,
+            Description:formData.description??null,
+            Priority:formData.priority??null,
+            Status:formData.status??null,
+            StartDate:formData.startDate,
+            EndDate:formData.endDate,
+            GroupId:formData.groupId??null,
+            AdditionalNotes:formData.additionNotes??null
+        })
     }
     return(
         <Dialog 

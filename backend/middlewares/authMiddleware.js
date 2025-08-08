@@ -16,14 +16,17 @@ const AuthMiddleware = async (req,res,next)=>{
         const token = authHeader && authHeader.split(' ')[1];
         
         if(!token){
+            console.log("Access token thiếu hoặc không hợp lệ")
             res.status(404)
             throw Error("Access token thiếu hoặc không hợp lệ");
+            
         }
 
         jwt.verify(token,process.env.ACCESS_TOKEN_KEY,async (err,decoded)=>{
             try{
                 
                 if(err){
+                    console.log("Token không hợp lệ hoặc đã hết hạn")
                     res.status(401);
                     throw Error("Token không hợp lệ hoặc đã hết hạn");
                 }
@@ -31,6 +34,7 @@ const AuthMiddleware = async (req,res,next)=>{
                 const refreshToken = await checkRefreshToken(decoded.id);
             
                 if(!refreshToken){
+                    console.log("Phiên đăng nhập hết hạn")
                     res.status(401)
                     throw Error("Phiên đăng nhập hết hạn")
                 }

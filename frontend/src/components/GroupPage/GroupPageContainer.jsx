@@ -17,13 +17,27 @@ import {
 import { GroupCard } from "../GroupCard";
 import AddIcon from '@mui/icons-material/Add';
 import { AddGroupDialog } from "../GroupDialog/AddGroupDialog";
-import { useState } from "react";
-
-
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllGroup,fetchDetailGroup } from "../../redux/thunk/groupThunk";
 
 export function GroupPageContainer(){
-
+    const dispatch = useDispatch();
+    const {AllGroup,GroupDetail,loading} =useSelector(s=>s.group) 
     const [open, setOpen] = useState(false);
+
+    
+    const allGroupRender = useMemo(()=>{
+        return AllGroup
+    },[AllGroup])
+    
+    useEffect(()=>{
+        const useFetchAllGroup = async()=>{
+            await dispatch(fetchAllGroup())
+        }
+        useFetchAllGroup();
+    },[])
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -36,11 +50,11 @@ export function GroupPageContainer(){
     return (
         <>
         <Box sx={{p:6}}>
-             <Box sx={{p:4, mt:2, borderRadius:1,border: "1px solid #A1A3ABA1"}}>
+             <Box sx={{p:6, mt:2, borderRadius:1,border: "1px solid #A1A3ABA1"}}>
                 <Box sx={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
 
                     
-                    <Typography variant="h5" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E",width:"10%"}}>Nhóm của bạn</Typography>
+                    <Typography variant="h5" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E"}}>Nhóm của bạn</Typography>
 
 
                     <Typography variant="h6" sx={{fontWeight:600,display:"flex", alignItems:"center",cursor:"pointer",gap:1}} onClick={handleClickOpen}> 
@@ -51,23 +65,18 @@ export function GroupPageContainer(){
                     
                 </Box>
 
-                <Grid container sx={{display:"flex",justifyContent:"space-around",gap:0,flexWrap:"wrap"}}>
+                <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12 }}>
 
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <GroupCard></GroupCard>
-                    </Grid>
+                    {
+                        allGroupRender?.length > 0
+                            ? allGroupRender.map((item) => (
+                                <Grid item size={{ xs: 2, sm: 4, md: 3 }}>
+                                    <GroupCard groupData ={item}></GroupCard>
+                                </Grid>
+                            ))
+                            : <div>Không có data</div>
+                    }
 
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <GroupCard></GroupCard>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <GroupCard></GroupCard>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <GroupCard></GroupCard>
-                    </Grid>
 
                 </Grid>
 
