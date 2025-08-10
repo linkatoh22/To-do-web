@@ -1,10 +1,13 @@
 import {createSlice} from "@reduxjs/toolkit"
-import { fetchAllTask,fetchDetailTask } from "../thunk/taskThunk"
+import { fetchAllTask,fetchDetailTask,fetchTaskGroupSort,fetchTaskSort,fetchUpdateTask,fetchDeleteTask,fetchCreateTask } from "../thunk/taskThunk"
 
 const initialState = {
     loading:false,
     AllTask:[],
-    TaskDetail:null
+    TaskDetail:null,
+    TaskSort:[],
+    TaskGroup:[],
+    status:null
 }
 
 
@@ -45,7 +48,81 @@ const taskSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload || "Lấy Task gần deadline thất bại";
             })
+
+
+            .addCase(fetchTaskSort.pending,(state)=>{
+                state.loading = true;
+                state.error = null;
+                
+            })
+            .addCase(fetchTaskSort.fulfilled, (state, action) => {
+                state.loading = false;
+                state.TaskSort = action.payload.data;
+                state.error = null;
+            })
+            .addCase(fetchTaskSort.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Lấy Task gần deadline thất bại";
+            })
             
+            .addCase(fetchTaskGroupSort.pending,(state)=>{
+                state.loading = true;
+                state.error = null;
+                
+            })
+            .addCase(fetchTaskGroupSort.fulfilled, (state, action) => {
+                state.loading = false;
+                state.TaskGroup = action.payload.data;
+                state.error = null;
+            })
+            .addCase(fetchTaskGroupSort.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Lấy Task gần deadline thất bại";
+            })
+
+
+            .addCase(fetchUpdateTask.pending,(state)=>{
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchUpdateTask.fulfilled, (state, action) => {
+                state.loading = false;
+                state.status = action.payload;
+                state.error = null;
+            })
+            .addCase(fetchUpdateTask.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Update task thất bại";
+            })
+
+
+            .addCase(fetchDeleteTask.pending,(state)=>{
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchDeleteTask.fulfilled, (state, action) => {
+                state.loading = false;
+                
+                state.error = null;
+            })
+            .addCase(fetchDeleteTask.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Update task thất bại";
+            })
+
+
+            .addCase(fetchCreateTask.pending,(state)=>{
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchCreateTask.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(fetchCreateTask.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Update task thất bại";
+            })
 
     }
 })

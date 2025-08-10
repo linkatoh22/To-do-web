@@ -16,6 +16,7 @@ import { HomePage } from './pages/Homepage'
 import { AllTaskPage } from './pages/AllTaskPage'
 import { DetailTaskPage } from './pages/DetailTaskPage'
 import { UserDetailContainer } from './components/UserDetailPage/UserDetailContainer'
+import { AllTaskGroupPage } from './pages/AllTaskGroupPage'
 
 import { ThemeProvider } from "@mui/material/styles";
 import { ToastContainer } from "react-toastify";
@@ -41,6 +42,7 @@ function App() {
                             <Route path="/" element={<HomePage />} />
                             <Route path="/group" element={<GroupPage />} />
                             <Route path="/all-task" element={<AllTaskPage />} />
+                            <Route path="group/all-task/:groupId" element={<AllTaskGroupPage />} />
                             <Route path="/detail-task/:id" element={<DetailTaskPage />} />
                             <Route path="/user" element={<UserDetailContainer />} />
                           </Route>

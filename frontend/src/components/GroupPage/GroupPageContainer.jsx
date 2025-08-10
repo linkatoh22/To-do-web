@@ -46,6 +46,9 @@ export function GroupPageContainer(){
         setOpen(false);
     };
 
+    const refetch = async ()=>{
+        await dispatch(fetchAllGroup())
+    }
 
     return (
         <>
@@ -71,7 +74,7 @@ export function GroupPageContainer(){
                         allGroupRender?.length > 0
                             ? allGroupRender.map((item) => (
                                 <Grid item size={{ xs: 2, sm: 4, md: 3 }}>
-                                    <GroupCard groupData ={item}></GroupCard>
+                                    <GroupCard groupData ={item} refetch={refetch}></GroupCard>
                                 </Grid>
                             ))
                             : <div>Không có data</div>
@@ -84,6 +87,7 @@ export function GroupPageContainer(){
              </Box>
         </Box>
         <AddGroupDialog
+            onSuccess={refetch}
             open={open}
             onClose={handleClose}
         ></AddGroupDialog>

@@ -81,6 +81,7 @@ const updateTask = async (req,res,next)=>{
             throw Error("Vui lòng nhập tên của task")
         }
 
+        
 
         let picUrl = null;
         if (req.file && req.file.buffer) {
@@ -101,10 +102,11 @@ const updateTask = async (req,res,next)=>{
             picUrl = result.secure_url;
         }
 
-
+        
 
         if(GroupId){
             const group = await Group.findOne({where:{id:GroupId,userId:userId}})
+            
             if(!group){
                 res.status(404)
                 throw Error("Không tìm thấy Group nào khớp với GroupId")
@@ -122,13 +124,20 @@ const updateTask = async (req,res,next)=>{
         };
         if (picUrl) updateData.Pic = picUrl;
 
-
-        await Task.update(updateData,{where:{id:taskId,userId:userId}})
+        try{
+            const TaskUpdate = await Task.update(updateData,{where:{id:taskId,userId:userId}})
+            
+        }
+        catch(error){
+            res.status(404)
+            throw Error("Có lỗi xảy ra khi update")
+        }
+        
 
         return res.status(200).json({
             status:"Success",
             code:200,
-            message:"Tạo task thành công"
+            message:"Update task thành công"
         })
     }
     catch(error){

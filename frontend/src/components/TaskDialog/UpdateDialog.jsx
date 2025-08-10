@@ -19,43 +19,92 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-  Button
+  Button,
+  Paper
 } from "@mui/material";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CloseIcon from '@mui/icons-material/Close';
 import dayjs from "dayjs";
-import Textarea from '@mui/joy/Textarea';
+import { fetchUpdateTask } from "../../redux/thunk/taskThunk";
+import { fetchAllGroup } from "../../redux/thunk/groupThunk";
+import { useDispatch, useSelector } from "react-redux";
+import { useMemo } from "react";
+import { styled } from "@mui/material";
+
+import {
+  CalendarToday as CalendarIcon,
+  CloudUpload as CloudUploadIcon
+} from '@mui/icons-material';
+
+const UploadArea = styled(Paper)(({ theme }) => ({
+  border: `2px dashed ${theme.palette.grey[300]}`,
+  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(4),
+  textAlign: 'center',
+  cursor: 'pointer',
+  transition: 'border-color 0.3s ease',
+  '&:hover': {
+    borderColor: theme.palette.primary.main,
+  },
+  '&.drag-over': {
+    borderColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.action.hover,
+  }
+}))
 
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
+export function UpdateDialog({TaskData,open,onClose,onSuccess}){
+    const [isChange,setIsChange] = useState(false)
+    const dispatch = useDispatch();
+    const {AllGroup,loading} =useSelector(s=>s.group) 
+   
 
+    
 
-export function UpdateDialog({open,onClose}){
+    useEffect(()=>{
+        const usefetchAllGroup = async()=>{
+            await(dispatch(fetchAllGroup()))
+        }
+        usefetchAllGroup();
+    },[])
+
+    const AllGroupRender = useMemo(()=>{
+        return AllGroup
+    },[AllGroup])
+
+    
+
     const [formData, setFormData] = useState({
-            name: "",
-            groupId: "",
-            status:"",
-            priority: "",
-            startDate:dayjs(),
-            endDate:dayjs(),
-            description: "",
-            additionNotes:""
+            Name: "",
+            GroupId: "",
+            Status:"",
+            Priority: "",
+            StartDate:dayjs(),
+            EndDate:dayjs(),
+            Description: "",
+            AdditionalNotes:"",
+            Pic:null
           })
 
+    useEffect(()=>{
+        
+        setFormData({
+            Name:TaskData?.Name??"",
+            GroupId:TaskData?.groupId??"",
+            Status:TaskData?.Status??"",
+            Priority: TaskData?.Priority??"",
+            StartDate: dayjs(TaskData?.StartDate??""),
+            EndDate: dayjs(TaskData?.EndDate??""),
+            Description: TaskData?.Description??"",
+            AdditionalNotes: TaskData?.AdditionalNotes??"",
+            Pic:null
+        })
+    },[TaskData,open])
+
      const handleInputChange = (key,value) => {
+        setIsChange(true)
         setFormData((prev) => ({
           ...prev,
           [key]:value
@@ -64,12 +113,72 @@ export function UpdateDialog({open,onClose}){
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        console.log(formData)
-        if (formData.endDate.isSame(formData.startDate) || formData.endDate.isBefore(formData.startDate)) {
+        if (formData.EndDate.isSame(formData.StartDate) || formData.EndDate.isBefore(formData.StartDate)) {
             toast.error("Ngày kết thúc phải sau ngày bắt đầu");
             return;
         }
+        const payload = {
+            ...formData,
+            StartDate: formData.StartDate ? formData.StartDate.format("YYYY-MM-DD") : null,
+            EndDate: formData.EndDate ? formData.EndDate.format("YYYY-MM-DD") : null
+        };
+        const response = await(dispatch(fetchUpdateTask({taskId:TaskData.id,payload:payload})))
+           
+        if (response?.payload?.status == "Success") {
+            toast.success("Chỉnh sửa task thành công.")
+            onSuccess();
+            onClose();
+
+        } else {
+            toast.error("Lỗi: " + response?.payload?.message);
+        }
     }
+
+
+    //UPLOAD PIC
+    const [dragOver, setDragOver] = useState(false)
+
+    const handleDragOver = (e) => {
+        e.preventDefault()
+        setDragOver(true)
+    }
+
+    const handleDragLeave = (e) => {
+        e.preventDefault()
+        setDragOver(false)
+    }
+
+
+    const handleFileSelect = (file) => {
+            setIsChange(true)
+            setFormData((prev) => ({
+                ...prev,
+                Pic: file
+            }));
+        };
+
+
+
+    const handleDrop = (e) => {
+        e.preventDefault()
+        setDragOver(false)
+        
+
+        const files = Array.from(e.dataTransfer.files)
+        if (files.length > 0) {
+        handleFileSelect(files[0])
+        }
+    }
+
+    const handleFileInputChange = (e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+        handleFileSelect(files[0]);
+    }
+    };
+    
+
+
     return(
         <Dialog 
             open={open}
@@ -104,7 +213,7 @@ export function UpdateDialog({open,onClose}){
                                     {/* TÊN TASK */}
                                     <Box >
                                         <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Tên task:</Typography>
-                                        <TextField fullWidth  id="fullWidth" required onChange={(e)=>handleInputChange("name",e.target.value)} value={formData.name}/>
+                                        <TextField fullWidth  id="fullWidth" required onChange={(e)=>handleInputChange("Name",e.target.value)} value={formData.Name}/>
                                     </Box>
 
                                     <Box sx={{mt:2}}>
@@ -115,8 +224,8 @@ export function UpdateDialog({open,onClose}){
                                             row
                                             aria-labelledby="demo-row-radio-buttons-group-label"
                                             name="row-radio-buttons-group"
-                                            required onChange={(e)=>handleInputChange("status",e.target.value)} 
-                                            value={formData.status}
+                                            required onChange={(e)=>handleInputChange("Status",e.target.value)} 
+                                            value={formData.Status}
                                         >
                                             <FormControlLabel value="Chưa bắt đầu" control={<Radio />} label="Chưa bắt đầu" />
                                             <FormControlLabel value="Đang làm" control={<Radio />} label="Đang làm" />
@@ -131,8 +240,8 @@ export function UpdateDialog({open,onClose}){
                                     <Box sx={{mt:2}}>
                                         <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Ngày bắt đầu:</Typography>
                                         <DatePicker
-                                           value={formData.startDate}
-                                            onChange={(newValue) => handleInputChange("startDate", newValue)}
+                                           value={formData.StartDate}
+                                            onChange={(newValue) => handleInputChange("StartDate", newValue)}
                                             slots={{ textField: TextField }}
                                             slotProps={{ textField: { required: true } }}
                                             enableAccessibleFieldDOMStructure={false}
@@ -151,17 +260,19 @@ export function UpdateDialog({open,onClose}){
                                             
                                             
                                             <Select
-                                                required onChange={(e)=>handleInputChange("groupId",e.target.value)} value={formData.groupId}
+                                                required 
+                                                onChange={(e)=>handleInputChange("GroupId",e.target.value)} 
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
-                                                // value={age}
+                                                value={formData.GroupId}
                                                 
                                                 inputProps={{ 'aria-label': 'Without label' }}
-                                                // onChange={handleChange}
+                                               
                                             >
-                                                <MenuItem value={10}>Ten</MenuItem>
-                                                <MenuItem value={20}>Twenty</MenuItem>
-                                                <MenuItem value={30}>Thirty</MenuItem>
+                                                <MenuItem value=""></MenuItem>
+                                                {AllGroupRender?.map((item)=>{
+                                                    return <MenuItem value={item?.id}>{item.Name}</MenuItem>
+                                                })}
                                             </Select>
                                         </FormControl>
                                     </Box>
@@ -171,7 +282,7 @@ export function UpdateDialog({open,onClose}){
                                         
                                         <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Độ ưu tiên:</Typography>
                                         <RadioGroup
-                                            required onChange={(e)=>handleInputChange("priority",e.target.value)} value={formData.priority}
+                                            required onChange={(e)=>handleInputChange("Priority",e.target.value)} value={formData.Priority}
                                             row
                                             aria-labelledby="demo-row-radio-buttons-group-label"
                                             name="row-radio-buttons-group"
@@ -188,8 +299,8 @@ export function UpdateDialog({open,onClose}){
                                     <Box sx={{mt:2}}>
                                         <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Ngày kết thúc:</Typography>
                                         <DatePicker
-                                            value={formData.endDate}
-                                            onChange={(newValue) => handleInputChange("endDate", newValue)}
+                                            value={formData.EndDate}
+                                            onChange={(newValue) => handleInputChange("EndDate", newValue)}
                                             slots={{ textField: TextField }}
                                             slotProps={{ textField: { required: true } }}
                                             enableAccessibleFieldDOMStructure={false}
@@ -199,33 +310,89 @@ export function UpdateDialog({open,onClose}){
 
                             </Grid>
                             
+                            <Grid container spacing={2}>
+                                <Grid size={{ xs: 6, md: 6 }} >
+                                    {/* MIÊU TẢ */}
+                                    <Box sx={{mt:3}}>
 
-                            {/* MIÊU TẢ */}
-                            <Box sx={{mt:2}}>
+                                        <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Miêu tả:</Typography>
+                                        <TextField
+                                            onChange={(e)=>handleInputChange("Description",e.target.value)} value={formData.Description}
+                                            fullWidth
+                                            multiline
+                                            minRows={3}
+                                            maxRows={5}
+                                            placeholder="Nhập miêu tả…"
+                                            
+                                        />
+                                    </Box>
+                                    {/* NOTE */}
+                                    <Box sx={{mt:2}}>
+                                        <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Note thêm:</Typography>
+                                        <TextField
+                                            onChange={(e)=>handleInputChange("AdditionalNotes",e.target.value)} value={formData.AdditionalNotes}
+                                            fullWidth
+                                            multiline
+                                            minRows={3}
+                                            maxRows={5}
+                                            placeholder="Nhập miêu tả…"
+                                        />
+                                    </Box>
+                                </Grid>
 
-                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Miêu tả:</Typography>
-                                <TextField
-                                     onChange={(e)=>handleInputChange("description",e.target.value)} value={formData.description}
-                                    fullWidth
-                                    multiline
-                                    minRows={3}
-                                    maxRows={5}
-                                    placeholder="Nhập miêu tả…"
-                                    
-                                />
-                            </Box>
-                            {/* NOTE */}
-                            <Box sx={{mt:2}}>
-                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Note thêm:</Typography>
-                                <TextField
-                                    onChange={(e)=>handleInputChange("additionNotes",e.target.value)} value={formData.additionNotes}
-                                    fullWidth
-                                    multiline
-                                    minRows={3}
-                                    maxRows={5}
-                                    placeholder="Nhập miêu tả…"
-                                />
-                            </Box>
+                                <Grid size={{ xs: 6, md: 6 }} >
+                                    <Box sx={{ flex: 1,mt:1 }}>
+                                            <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Tải ảnh avatar:</Typography>
+
+                                            <UploadArea
+                                                className={dragOver ? 'drag-over' : ''}
+                                                onDragOver={handleDragOver}
+                                                onDragLeave={handleDragLeave}
+                                                onDrop={handleDrop}
+                                                onClick={() => document.getElementById('file-input')?.click()}
+                                                sx={{ height: 200, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+                                            >
+                                                <CloudUploadIcon sx={{ fontSize: 48, color: 'grey.400', mb: 1 }} />
+
+                                                <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                                                    Kéo và thả ảnh vào đây
+                                                </Typography>
+
+                                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                                    Hoặc
+                                                </Typography>
+
+                                                <Button 
+                                                variant="outlined" 
+                                                size="small"
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    document.getElementById('upload-input')?.click()
+                                                }}
+                                                >
+                                                Tải file lên
+                                                </Button>
+
+                                                {formData.Pic && (
+                                                <Typography variant="h7"  color="primary" sx={{ mt: 1 }}>
+                                                    File đã nhận: {formData.Pic.name}
+                                                </Typography>
+                                                )}
+
+                                            </UploadArea>
+                                            <input
+                                                type="file"
+                                                onChange={handleFileInputChange}
+                                                style={{ display: "none" }}
+                                                id="upload-input"
+                                                />
+                                    </Box>
+
+                                </Grid>
+
+                            </Grid>
+
+
                             <Grid container spacing={2} sx={{mt:2}}>
                                 <Grid item sx={{ xs: 12, md: 6 }}>
                                     <Button
@@ -267,6 +434,7 @@ export function UpdateDialog({open,onClose}){
 
                                 <Grid item sx={{ xs: 12, md: 6 }}>
                                     <Button
+                                        disabled={!isChange ||loading}
                                         type="submit"
                                         sx={{
                                             

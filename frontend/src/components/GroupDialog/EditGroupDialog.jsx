@@ -33,6 +33,9 @@ import {
   CalendarToday as CalendarIcon,
   CloudUpload as CloudUploadIcon
 } from '@mui/icons-material';
+import { fetchUpdateGroup } from "../../redux/thunk/groupThunk";
+import { useDispatch, useSelector } from "react-redux";
+
 const UploadArea = styled(Paper)(({ theme }) => ({
   border: `2px dashed ${theme.palette.grey[300]}`,
   borderRadius: theme.shape.borderRadius,
@@ -51,12 +54,24 @@ const UploadArea = styled(Paper)(({ theme }) => ({
 
 
 
-export function EditGroupDialog({open,onClose}){
+export function EditGroupDialog({groupData,open,onClose,onSuccess}){
+    const dispatch = useDispatch();
     const [formData, setFormData] = useState({
             name: "",
             description: "",
             image: undefined
           })
+
+    const {loading} = useSelector(s=>s.group)
+    const [isChange,setIsChange] = useState(false)
+
+    useEffect(()=>{
+        setFormData({
+            name: groupData?.Name,
+            description: groupData?.Description,
+            image: undefined
+        })
+    },[groupData])
     const [dragOver, setDragOver] = useState(false)
 
     const handleDragOver = (e) => {
@@ -64,13 +79,13 @@ export function EditGroupDialog({open,onClose}){
         setDragOver(true)
     }
 
-  const handleDragLeave = (e) => {
-    e.preventDefault()
-    setDragOver(false)
-  }
+    const handleDragLeave = (e) => {
+        e.preventDefault()
+        setDragOver(false)
+    }
 
 
-  const handleFileSelect = (file) => {
+    const handleFileSelect = (file) => {
         setFormData((prev) => ({
             ...prev,
             image: file
@@ -79,26 +94,28 @@ export function EditGroupDialog({open,onClose}){
 
 
 
-  const handleDrop = (e) => {
-    e.preventDefault()
-    setDragOver(false)
-    
+    const handleDrop = (e) => {
+        e.preventDefault()
+        setDragOver(false)
+        
 
-    const files = Array.from(e.dataTransfer.files)
-    if (files.length > 0) {
-      handleFileSelect(files[0])
+        const files = Array.from(e.dataTransfer.files)
+            if (files.length > 0) {
+            handleFileSelect(files[0])
+            }
     }
-  }
 
-  const handleFileInputChange = (e) => {
-  const files = e.target.files;
-  if (files && files.length > 0) {
-    handleFileSelect(files[0]);
-  }
-};
+    const handleFileInputChange = (e) => {
+        setIsChange(true);
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            handleFileSelect(files[0]);
+        }
+    };
     
 
      const handleInputChange = (key,value) => {
+        setIsChange(true);
         setFormData((prev) => ({
           ...prev,
           [key]:value
@@ -108,6 +125,26 @@ export function EditGroupDialog({open,onClose}){
     const handleSubmit = async (event) => {
         event.preventDefault()
         console.log(formData)
+
+        const payload = {
+            Name:formData.name,
+            Description:formData.description,
+            Pic:formData.image,
+
+        };
+
+        console.log(payload)
+        const response = await dispatch(fetchUpdateGroup({groupId:groupData?.id, data:payload}))
+
+        console.log("response: ",response)
+        if (response?.payload?.status == "Success") {
+            toast.success("Chỉnh sửa Nhóm Công Việc thành công.")
+            onSuccess();
+            onClose();
+
+        } else {
+            toast.error("Lỗi: " + response?.payload?.message);
+        }
         
     }
     return(
@@ -251,6 +288,7 @@ export function EditGroupDialog({open,onClose}){
 
                                 <Grid item sx={{ xs: 12, md: 6 }}>
                                     <Button
+                                        disabled={loading || !isChange}
                                         type="submit"
                                         sx={{
                                             

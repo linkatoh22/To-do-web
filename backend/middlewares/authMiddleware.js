@@ -26,7 +26,7 @@ const AuthMiddleware = async (req,res,next)=>{
             try{
                 
                 if(err){
-                    console.log("Token không hợp lệ hoặc đã hết hạn")
+                    //HERRE
                     res.status(401);
                     throw Error("Token không hợp lệ hoặc đã hết hạn");
                 }
@@ -34,7 +34,7 @@ const AuthMiddleware = async (req,res,next)=>{
                 const refreshToken = await checkRefreshToken(decoded.id);
             
                 if(!refreshToken){
-                    console.log("Phiên đăng nhập hết hạn")
+                   
                     res.status(401)
                     throw Error("Phiên đăng nhập hết hạn")
                 }

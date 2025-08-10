@@ -33,6 +33,11 @@ import {
   CalendarToday as CalendarIcon,
   CloudUpload as CloudUploadIcon
 } from '@mui/icons-material';
+
+import { fetchCreateGroup } from "../../redux/thunk/groupThunk";
+import { useDispatch, useSelector } from "react-redux";
+
+
 const UploadArea = styled(Paper)(({ theme }) => ({
   border: `2px dashed ${theme.palette.grey[300]}`,
   borderRadius: theme.shape.borderRadius,
@@ -51,63 +56,86 @@ const UploadArea = styled(Paper)(({ theme }) => ({
 
 
 
-export function AddGroupDialog({open,onClose}){
+export function AddGroupDialog({TaskData,open,onClose,onSuccess}){
+    const {loading} = useSelector(s=>s.group)
     const [formData, setFormData] = useState({
             name: "",
             description: "",
             image: undefined
           })
     const [dragOver, setDragOver] = useState(false)
-
+    const [isChange, setIsChange] = useState(false)
     const handleDragOver = (e) => {
         e.preventDefault()
         setDragOver(true)
     }
 
-  const handleDragLeave = (e) => {
-    e.preventDefault()
-    setDragOver(false)
-  }
-
-
-  const handleFileSelect = (file) => {
-        setFormData((prev) => ({
-            ...prev,
-            image: file
-        }));
-    };
-
-
-
-  const handleDrop = (e) => {
-    e.preventDefault()
-    setDragOver(false)
-    
-
-    const files = Array.from(e.dataTransfer.files)
-    if (files.length > 0) {
-      handleFileSelect(files[0])
+    const handleDragLeave = (e) => {
+        e.preventDefault()
+        setDragOver(false)
     }
-  }
 
-  const handleFileInputChange = (e) => {
-  const files = e.target.files;
-  if (files && files.length > 0) {
-    handleFileSelect(files[0]);
-  }
-};
+
+    const handleFileSelect = (file) => {
+            setFormData((prev) => ({
+                ...prev,
+                image: file
+            }));
+        };
+
+
+
+    const handleDrop = (e) => {
+        e.preventDefault()
+        setDragOver(false)
+        
+
+        const files = Array.from(e.dataTransfer.files)
+        if (files.length > 0) {
+        handleFileSelect(files[0])
+        }
+    }
+
+    const handleFileInputChange = (e) => {
+        setIsChange(true)
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            handleFileSelect(files[0]);
+        }
+    };
     
 
      const handleInputChange = (key,value) => {
+        setIsChange(true)
         setFormData((prev) => ({
           ...prev,
           [key]:value
         }))
       }
-
+    const dispatch = useDispatch()
     const handleSubmit = async (event) => {
         event.preventDefault()
-        console.log(formData)
+        
+        const payload = {
+            Name:formData.name,
+            Description:formData.description,
+            Pic:formData.image,
+
+        };
+
+        
+        const response = await dispatch(fetchCreateGroup({data:payload}))
+
+        
+        if (response?.payload?.status == "Success") {
+            toast.success("Thêm Nhóm Công Việc thành công.")
+            onSuccess();
+            onClose();
+
+        } else {
+            toast.error("Lỗi: " + response?.payload?.message);
+        }
+        
         
     }
     return(
@@ -118,7 +146,7 @@ export function AddGroupDialog({open,onClose}){
             >
             
             <DialogTitle variant="h5" sx={{ m: 0, p: 2,fontWeight:"bold" }} id="customized-dialog-title">
-                Thêm task mới
+                Thêm Nhóm Công Việc mới
             </DialogTitle>
 
             <IconButton
@@ -142,7 +170,7 @@ export function AddGroupDialog({open,onClose}){
                            <Grid container spacing={3}>
                                 <Grid size={{ xs: 6, md: 6 }} >
                                     <Box >
-                                        <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Tên task:</Typography>
+                                        <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Tên nhóm:</Typography>
                                         <TextField fullWidth  id="fullWidth" required onChange={(e)=>handleInputChange("name",e.target.value)} value={formData.name}/>
                                     </Box>
 
@@ -203,7 +231,7 @@ export function AddGroupDialog({open,onClose}){
                                             style={{ display: "none" }}
                                             id="upload-input"
                                             />
-                                        </Box>
+                                    </Box>
 
                                 </Grid>
 
@@ -251,6 +279,7 @@ export function AddGroupDialog({open,onClose}){
 
                                 <Grid item sx={{ xs: 12, md: 6 }}>
                                     <Button
+                                        disabled={loading || !isChange}
                                         type="submit"
                                         sx={{
                                             

@@ -27,7 +27,7 @@ import { EditGroupDialog } from "./GroupDialog/EditGroupDialog";
 import { ViewDetailGroup } from "./GroupDialog/ViewDetailGroupDialog";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-export function GroupCard({groupData}){
+export function GroupCard({groupData,refetch}){
     const [showMore, setShowMore] = useState(false);
     const content = groupData?.Description?? "Chưa cập nhập";
 
@@ -144,8 +144,10 @@ export function GroupCard({groupData}){
         </Card>
 
         <EditGroupDialog
+            groupData={groupData}
             open={openEditDialog}
             onClose={handleCloseEditDialog}
+            onSuccess={refetch}
         ></EditGroupDialog>
 
         <ViewDetailGroup

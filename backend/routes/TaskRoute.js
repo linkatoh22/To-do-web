@@ -13,9 +13,9 @@ const {createTask,updateTask,
         } = require("../controllers/TaskController")
 
 
-
-router.route("/create-task").post(AuthMiddleware,upload.single("Pic"),createTask)
 router.route("/update-task/:taskId").put(AuthMiddleware,upload.single("Pic"),updateTask)
+router.route("/create-task").post(AuthMiddleware,upload.single("Pic"),createTask)
+
 router.route("/delete-task/:taskId").delete(AuthMiddleware,deleteTask)
 
 

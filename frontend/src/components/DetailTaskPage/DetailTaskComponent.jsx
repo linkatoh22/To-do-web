@@ -14,7 +14,10 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useParams } from "react-router-dom";
 import { fetchDetailTask } from "../../redux/thunk/taskThunk";
 import { useDispatch,useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import dayjs from "dayjs";
+
+
 const ImageGroup = styled.img`
     width:20%; 
     aspect-ratio: 1 / 1;
@@ -25,15 +28,30 @@ export function DetailTaskContainer(){
     const {AllTask,TaskDetail} = useSelector(s=>s.task)
     const {id}= useParams();
     const dispatch = useDispatch()
+   
 
-    useEffect(()=>{
-        console.log("TaskDetail: ",TaskDetail)
+    const TaskDetailRender = useMemo(()=>{
+        return TaskDetail
     },[TaskDetail])
+
     useEffect(()=>{
         const fetchDetailTaskRender = async()=>{
             await dispatch(fetchDetailTask({taskId:id}))
         }
+
+        fetchDetailTaskRender();
     },[])
+
+    const endDateStr = TaskDetail?.EndDate
+        ? dayjs(TaskDetail.EndDate).locale("vi").format("dddd, DD/MM/YYYY")
+        : "Chưa cập nhập";
+
+    const startDateStr = TaskDetail?.StartDate
+        ? dayjs(TaskDetail.StartDate).locale("vi").format("dddd, DD/MM/YYYY")
+        : "Chưa cập nhập";
+
+
+
     return(
         <Box sx={{p:5}}>
                     <Box sx={{p:4, mt:2, borderRadius:3,border: "1px solid #A1A3ABA1",height:"73vh",overflowY:"auto",position:"relative"}}>
@@ -41,30 +59,51 @@ export function DetailTaskContainer(){
                         <Box sx={{display:"flex",gap:3}}>
                             <ImageGroup src="https://mui.com/static/images/cards/live-from-space.jpg" />
                             <Box>
+
                                 <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                                    Heat 1/2 cup of the broth in a pot until simmering.
+                                    {TaskDetailRender?.Name?? "Chưa cập nhập"}
                                 </Typography>
-                                <Typography>Priority: Extreme</Typography>
-                                <Typography>Status: Extreme</Typography>
-                                <Typography>Status: Extreme</Typography>
+
+                                <Typography mt={1}>
+                                    Độ ưu tiên: {TaskDetailRender?.Priority?? "Chưa cập nhập"}
+                                </Typography>
+
+                                <Typography mt={1}>
+                                    Trạng thái: {TaskDetailRender?.Status?? "Chưa cập nhập"}
+                                </Typography>
+
+                                <Typography mt={1}>
+                                    Ngày bắt đầu: {startDateStr}
+                                </Typography>
+
+                                <Typography mt={1}>
+                                    Ngày kết thúc: {endDateStr}
+                                </Typography>
+
                             </Box>
 
                         </Box>
 
                         <Box sx={{overflowY:"auto"}}>
-                            <Typography sx={{mt:2, fontSize:"1.2rem"}}>
-                                Take the dog to the park and bring treats as well.
-                                Take Luffy and Jiro for a leisurely stroll around the neighborhood. Enjoy the fresh air and give them the exercise and mental stimulation they need for a happy and healthy day. Don't forget to bring along squeaky and fluffy for some extra fun along the way!
-                            </Typography>
+                            
+                            <Box mt={1}>  
+                                <Typography variant="h6" sx={{fontWeight:600}}>
+                                    Miêu tả:
+                                </Typography>
+                                <Typography sx={{fontSize:"1.2rem"}}>
+                                    {TaskDetailRender?.Description?? "Chưa cập nhập"}
+                                </Typography>
+                            </Box>
 
-                            <Typography sx={{mt:2, fontSize:"1.2rem"}}>
-                            Listen to a podcast or audiobook
-                            Practice mindfulness or meditation
-                            Take photos of interesting sights along the way
-                            Practice obedience training with your dog
-                            Chat with neighbors or other dog walkers
-                            Listen to music or an upbeat playlist
-                            </Typography>
+                            <Box mt={1}>
+                                <Typography variant="h6" sx={{fontWeight:600}}>
+                                    Note bổ sung:
+                                </Typography>
+
+                                <Typography sx={{ fontSize:"1.2rem"}}>
+                                {TaskDetailRender?.AdditionalNotes?? "Chưa cập nhập"}
+                                </Typography>
+                            </Box>
 
                         </Box>
 
