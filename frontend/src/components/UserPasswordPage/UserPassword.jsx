@@ -13,44 +13,25 @@ import { fetchViewProfile,fetchEditProfile } from "../../redux/thunk/userThunk";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { use, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUpdateGroup } from "../../redux/thunk/groupThunk";
+
 import { toast } from "react-toastify";
-const ImageGroup = styled.img`
-        width:8%;
-        aspect-ratio: 1 / 1;
-     object-fit: cover;
-     border-radius: 100%;
-`
+import { fetchChangePassword } from "../../redux/thunk/userThunk";
 
 
 
-export function UserDetailContainer(){
+export function UserPassword(){
     const dispatch = useDispatch()
-    const {Profile,loading} = useSelector(s=>s.user)
+    const {loading} = useSelector(s=>s.user)
     const [isEdit,setIsEdit]= useState(false);
-    
-    useEffect(()=>{
-        const fetchProfileRender = async() =>{
-            await dispatch(fetchViewProfile());
-        }
-        fetchProfileRender();
-    },[])
-
-    
-    const handleEditClick = () => {
-        
-        setIsEdit(!isEdit);
-    }
 
     const [formData,setFormData] = useState({
-        first_name:"",
-        last_name:"",
-        username:"",
-        image:null
+        oldPassword:"",
+        newPassword:"",
+        confirmPassword:""
     })
 
     const handleInputChange = (field, value) => {
-         event.preventDefault()
+        
         setFormData({
             ...formData,
             [field]: value
@@ -59,38 +40,31 @@ export function UserDetailContainer(){
 
     const handleSubmit = async (event)=>{
             event.preventDefault()
-             editProfile();
+            console.log("formData: ",formData)
+            if(formData.newPassword !=formData.confirmPassword){
+                toast.error("Lỗi: Mật khẩu mới và mật khẩu xác nhận không giống nhau.")
+                return
+            }
+            if(formData.newPassword <8){
+                toast.error("Lỗi: Mật khẩu phải có chiều dài lớn hơn 0.")
+                return
+            }
+
+            const response = await dispatch(fetchChangePassword(formData))
+
+             if (response?.payload?.status == "Success") {
+                toast.success("Đổi mật khẩu thành công.")
+                        
+            } else {
+                toast.error("Lỗi: " + response?.payload?.message);
+            }
     }
 
 
-    useEffect(()=>{
-        setFormData({
-            first_name: Profile?.first_name??"",
-            last_name:  Profile?.last_name??"",
-            username:   Profile?.username??"",
-            image:  Profile?.avatar??null,
-        })
-    },[Profile])
+   
 
 
-    const editProfile = async()=>{
-         const payload = {
-            first_name:formData.first_name,
-            last_name:formData.last_name,
-            username:formData.username,
-           
-        };
-        const response = await dispatch(fetchEditProfile({payload}))
-
-        if (response?.payload?.status == "Success") {
-            toast.success("Chỉnh sửa người dùng thành công.")
-            await dispatch(fetchEditProfile({payload:payload}));
-
-        } else {
-            toast.error("Lỗi: " + response?.payload?.message);
-        }
-
-    }
+    
     return(
         <Box sx={{p:5}}>
                     <Box sx={{p:5, mt:2, borderRadius:3,border: "1px solid #A1A3ABA1",height:"73vh"}}>
@@ -118,11 +92,13 @@ export function UserDetailContainer(){
                         <Box sx={{p:5, mt:2, borderRadius:3,border: "1px solid #A1A3ABA1",display:"flex",flexDirection:"column",gap:2}}>
 
                             <form onSubmit={handleSubmit}>
-                            <Box sx={{width:"65%"}}>
-                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Họ Tên:</Typography>
-                                <TextField fullWidth  id="fullWidth" required 
-                                    disabled={!isEdit}
-
+                            <Box sx={{width:"45%"}}>
+                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Mật khẩu cũ:</Typography>
+                                <TextField 
+                                    type="password"
+                                    fullWidth  id="fullWidth" 
+                                    required 
+                                    
                                     sx={{
                                         "& .MuiOutlinedInput-root": {
                                             borderRadius: 3      
@@ -131,14 +107,16 @@ export function UserDetailContainer(){
                                             py: 1.2, 
                                         }
                                     }}
-                                    onChange={(e)=>handleInputChange("username",e.target.value)} 
-                                    value={formData.username}
+                                    onChange={(e)=>handleInputChange("oldPassword",e.target.value)} 
+                                    value={formData.oldPassword}
                                 />
                             </Box>
 
-                            <Box sx={{width:"65%"}}>
-                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Tên:</Typography>
-                                <TextField fullWidth  id="fullWidth" required  disabled={!isEdit} 
+                            <Box sx={{width:"45%",mt:1}}>
+                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Mật khẩu mới:</Typography>
+                                <TextField 
+                                    type="password"
+                                    fullWidth  id="fullWidth" 
                                     sx={{
                                         "& .MuiOutlinedInput-root": {
                                             borderRadius: 3      
@@ -147,15 +125,17 @@ export function UserDetailContainer(){
                                             py: 1.2, 
                                         }
                                     }}
-                                    onChange={(e)=>handleInputChange("first_name",e.target.value)} 
-                                    value={formData.first_name}
+                                    onChange={(e)=>handleInputChange("newPassword",e.target.value)} 
+                                    value={formData.newPassword}
                                 />
                             </Box>
 
 
-                            <Box sx={{width:"65%"}}>
-                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Họ:</Typography>
-                                <TextField fullWidth  id="fullWidth" required  disabled={!isEdit}
+                            <Box sx={{width:"45%",mt:1}}>
+                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Xác nhận:</Typography>
+                                <TextField 
+                                    type="password"
+                                    fullWidth  id="fullWidth" required  
                                     sx={{
                                         "& .MuiOutlinedInput-root": {
                                             borderRadius: 3      
@@ -164,8 +144,8 @@ export function UserDetailContainer(){
                                             py: 1.2, 
                                         }
                                     }}
-                                    onChange={(e)=>handleInputChange("last_name",e.target.value)} 
-                                    value={formData.last_name}
+                                    onChange={(e)=>handleInputChange("confirmPassword",e.target.value)} 
+                                    value={formData.confirmPassword}
                                 />
                             </Box>
                             </form>
@@ -174,27 +154,8 @@ export function UserDetailContainer(){
                             <Box sx={{width:"70%", display:"flex", gap:2, alignItems:"center"}}>
                                 <Button 
                                 disable={loading}
-                                variant= {isEdit?"contained":"outlined" }
-                                onClick={(e)=>{
-                                    handleEditClick()
-                                    isEdit? handleSubmit(e):null
-                                }}
-                                sx={{
-                                    backgroundColor: isEdit ? "#F24E1E" : "transparent",
-                                    color: isEdit ? "white" : "#F24E1E",
-                                    borderColor: "#F24E1E",
-                                    "&:hover": {
-                                    backgroundColor: isEdit ? "#d63a0e" : "rgba(242,78,30,0.08)"
-                                    }
-                                }}
-                                
-                                
-                                
-                                >
-                                     {isEdit? "Xong":"Chỉnh sửa thông tin"}
-                                </Button>
-
-                                <Button variant="contained" sx={{backgroundColor:"#F24E1E",color:"white"}}>
+                                onClick={(e)=>handleSubmit(e)}
+                                variant="contained" sx={{backgroundColor:"#F24E1E",color:"white"}}>
                                    Đổi mật khẩu
                                 </Button>
                             </Box>

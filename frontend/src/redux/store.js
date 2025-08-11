@@ -4,12 +4,14 @@ import forgetPasswordReducer from "../redux/slice/forgetPasswordSlice"
 import dashBoardReducer from "../redux/slice/dashBoardSlice"
 import groupReducer from "../redux/slice/groupSlice"
 import taskReducer from "../redux/slice/taskSlice"
+import userReducer from "../redux/slice/userSlice"
 export const store = configureStore({
     reducer:{
         auth:authReducer,
         forgetPassword: forgetPasswordReducer,
         dashBoard: dashBoardReducer,
         group:groupReducer,
-        task:taskReducer
+        task:taskReducer,
+        user:userReducer
     }
 })

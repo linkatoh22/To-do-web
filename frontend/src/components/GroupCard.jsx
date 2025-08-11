@@ -27,6 +27,9 @@ import { EditGroupDialog } from "./GroupDialog/EditGroupDialog";
 import { ViewDetailGroup } from "./GroupDialog/ViewDetailGroupDialog";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { fetchDeleteGroup } from "../redux/thunk/groupThunk";
+import { useDispatch } from "react-redux";
+
 export function GroupCard({groupData,refetch}){
     const [showMore, setShowMore] = useState(false);
     const content = groupData?.Description?? "Chưa cập nhập";
@@ -36,7 +39,7 @@ export function GroupCard({groupData,refetch}){
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
-    
+    const dispatch = useDispatch();
 
 
     const [openViewDialog, setOpenViewDialog] = useState(false);
@@ -54,6 +57,7 @@ export function GroupCard({groupData,refetch}){
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
+
     const handleClose = (type) => {
         if (type === "edit") {
             setOpenEditDialog(true)
@@ -63,6 +67,21 @@ export function GroupCard({groupData,refetch}){
         }
         setAnchorEl(null);
     };
+
+    const handleDeleteGroup = async(id)=>{
+        const response = await dispatch(fetchDeleteGroup({groupId:id}))
+
+        if (response?.payload?.status == "Success") {
+            toast.success("Xóa nhóm công việc thành công.")
+            refetch();
+            
+
+        } else {
+            toast.error("Lỗi: " + response?.payload?.message);
+        }
+
+    }
+
     return(
         <>
         <Card sx={{ maxWidth: 400,  "&:hover": {
@@ -115,7 +134,11 @@ export function GroupCard({groupData,refetch}){
                         {/* <ArchiveIcon /> */}
                         Sửa
                         </MenuItem>
-                        <MenuItem onClick={()=>handleClose("delete")} disableRipple>
+                        <MenuItem 
+                        onClick={()=>{
+                            handleClose("delete")
+                            handleDeleteGroup(groupData.id)
+                        }} disableRipple>
                         {/* <MoreHorizIcon /> */}
                         Xóa
                         </MenuItem>

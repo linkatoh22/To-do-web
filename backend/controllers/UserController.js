@@ -1,6 +1,6 @@
 const User = require("../models/userModel")
 const cloudinary = require("../configs/cloudinary");
-
+const bcrypt = require("bcrypt")
 
 
 const editProfile = async(req,res,next)=>{
@@ -99,7 +99,7 @@ const getUser = async(req,res,next)=>{
 const changePassword = async(req,res,next)=>{
     try{
         const {oldPassword,newPassword} = req.body;
-
+        console.log("req.body: ",req.body)
         if(!oldPassword || !newPassword){
             res.status(404);
             throw Error("Vui lòng nhập đủ tất cả trường")
@@ -122,7 +122,7 @@ const changePassword = async(req,res,next)=>{
         }
 
 
-        const hashedPassword = bcrypt.hash(newPassword,10);
+        const hashedPassword = await bcrypt.hash(newPassword,10);
 
         
         await User.update(

@@ -269,7 +269,7 @@ export function UpdateDialog({TaskData,open,onClose,onSuccess}){
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                                
                                             >
-                                                <MenuItem value=""></MenuItem>
+                                                <MenuItem value="">Không chọn</MenuItem>
                                                 {AllGroupRender?.map((item)=>{
                                                     return <MenuItem value={item?.id}>{item.Name}</MenuItem>
                                                 })}

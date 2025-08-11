@@ -133,10 +133,10 @@ export function EditGroupDialog({groupData,open,onClose,onSuccess}){
 
         };
 
-        console.log(payload)
+        
         const response = await dispatch(fetchUpdateGroup({groupId:groupData?.id, data:payload}))
 
-        console.log("response: ",response)
+       
         if (response?.payload?.status == "Success") {
             toast.success("Chỉnh sửa Nhóm Công Việc thành công.")
             onSuccess();

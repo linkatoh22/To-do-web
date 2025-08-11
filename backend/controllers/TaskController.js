@@ -417,6 +417,14 @@ const getAllTaskOfGroup = async(req,res,next)=>{
     }
 }
 
+const SearchTask = async (req,res,next)=>{
+    try{
+
+    }
+    catch(error){
+        next(error)
+    }
+}
 
 
 module.exports = {
@@ -428,5 +436,6 @@ module.exports = {
         getNearestDeadlineTasks,
         getNearestDeadlineComplete,
         getAllTaskOfUser,
-        getAllTaskOfGroup
+        getAllTaskOfGroup,
+        SearchTask
     }
