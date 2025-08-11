@@ -114,4 +114,21 @@ export const fetchCreateTask = createAsyncThunk(
 )
 
 
+export const fetchTaskSortKeyword = createAsyncThunk(
+    "group/fetchTaskSortKeyword",
+    async(payload,{rejectWithValue })=>{
+        try{
+            
+            const response = await TaskApi.fetchTaskSortKeyword(payload);
+           
+            return response.data;
+        }
+        catch(error){
+            return rejectWithValue (error.response?.data || error.message);
+        }
+    }
+
+)
+
+
 

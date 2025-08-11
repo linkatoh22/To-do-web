@@ -45,15 +45,15 @@ const createTask = async (req,res,next)=>{
 
         await Task.create({
             Name:Name,
-            Description:Description??null,
-            Priority: Priority?? null,
-            StartDate:StartDate?? null,
-            EndDate:EndDate??null,
+            Description:Description||null,
+            Priority: Priority|| null,
+            StartDate:StartDate|| null,
+            EndDate:EndDate||null,
             Pic:picUrl,
-            groupId:GroupId?? null,
+            groupId:GroupId|| null,
             userId:userId,
-            AdditionalNotes:AdditionalNotes??null,
-            Status:Status?? null
+            AdditionalNotes:AdditionalNotes||null,
+            Status:Status|| null
         })
 
         return res.status(200).json({
@@ -292,7 +292,7 @@ const getNearestDeadlineComplete = async(req,res,next)=>{
                 { model: User, attributes: ['id','first_name','last_name', 'username', 'email','avatar'] }
             ],
             order:[['EndDate','ASC']],
-            limit: 2
+            limit: 1
         })
         return res.status(200).json({
             status: "Success",
@@ -309,6 +309,7 @@ const getNearestDeadlineComplete = async(req,res,next)=>{
 // MY TASK
 //API: Get all of the task of user ( sort: (Deadline, Status, Priority) )
 const getAllTaskOfUser = async(req,res,next)=>{
+    
     const userId = req.user.id;
     const {sortBy,status} = req.query;
 
@@ -364,6 +365,7 @@ const getAllTaskOfUser = async(req,res,next)=>{
 // TASK GROUP
 //API2: Get all the the task in the task group ( sort: (Deadline,Status,Priority) )
 const getAllTaskOfGroup = async(req,res,next)=>{
+    
     const userId = req.user.id;
     const {sortBy,status,groupId} = req.query;
 
@@ -418,11 +420,60 @@ const getAllTaskOfGroup = async(req,res,next)=>{
 }
 
 const SearchTask = async (req,res,next)=>{
-    try{
+    
+   const userId = req.user.id;
+    const { sortBy, status, keyword } = req.query;
 
+    let where = { userId };
+    if (status) where.Status = status;
+
+    if (keyword) {
+        where.Name = { [Op.like]: `%${keyword}%` };
     }
-    catch(error){
-        next(error)
+
+    let order = [];
+
+    if (sortBy === 'deadline') {
+        order.push(['EndDate', 'ASC']);
+    }
+
+    if (sortBy === 'priorityASC') {
+        order.push([
+            Sequelize.literal(`CASE
+                WHEN "Priority" = 'Thấp' THEN 1
+                WHEN "Priority" = 'Trung bình' THEN 2
+                WHEN "Priority" = 'Cao' THEN 3
+                ELSE 4 END`),
+            'ASC'
+        ]);
+    } else if (sortBy === 'priorityDESC') {
+        order.push([
+            Sequelize.literal(`CASE
+                WHEN "Priority" = 'Thấp' THEN 1
+                WHEN "Priority" = 'Trung bình' THEN 2
+                WHEN "Priority" = 'Cao' THEN 3
+                ELSE 4 END`),
+            'DESC'
+        ]);
+    }
+
+    try {
+        const tasks = await Task.findAll({
+            where,
+            include: [
+                { model: Group, attributes: ['id', 'Name', 'Description', 'Pic'] },
+                { model: User, attributes: ['id', 'first_name', 'last_name', 'username', 'email', 'avatar'] }
+            ],
+            order
+        });
+
+        return res.status(200).json({
+            status: "Success",
+            code: 200,
+            data: tasks
+        });
+    } catch (error) {
+        next(error);
     }
 }
 

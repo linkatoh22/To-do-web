@@ -47,6 +47,10 @@ const logIn = async(req,res,next)=>{
             token:{
                 accessToken,
                 refreshToken
+            },
+            user:{
+                email:user.email,
+                username:user.username
             }
         })
 
@@ -162,4 +166,39 @@ const changePassword = async(req,res,next)=>{
     }
     
 }
-module.exports = {signUp,logIn,changePassword}
+
+const logOut = async(req,res,next)=>{
+     try{
+        const refreshToken = req.cookies.refreshToken;
+        
+        if(!refreshToken){
+            res.status(404)
+            throw new Error("Không tìm thấy Refresh Token.");
+        }
+        
+        const user = await User.findOne({where:{refresh_token:refreshToken}})
+        
+        if(!user){
+            res.status(400)
+            throw new Error("Refresh Token không hợp lệ.");
+        }
+        
+        await User.update(
+            { refresh_token: null }, 
+            { where: { refresh_token: refreshToken } }
+        );
+        const Secure = process.env.SECURE == "true"? true:false;
+        res.clearCookie("refreshToken", { httpOnly: true, secure: Secure, sameSite: process.env.SAME_SITE });
+
+        return res.status(200).json({
+            message:"Log Out Successfully",
+            status:"Success",
+            code:200,
+        });
+
+    }   
+    catch(error){
+        next(error);
+    } 
+}
+module.exports = {signUp,logIn,changePassword,logOut}

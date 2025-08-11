@@ -4,6 +4,21 @@ import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import { useIsMobile } from "./utils/useMobile"
 import SidebarNavigation from "./components/Sidebar";
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Avatar,
+  Typography,
+  Divider,
+  Paper,
+  IconButton,
+  Tooltip,
+  Drawer,
+} from "@mui/material"
 const ContentWrapper  = styled.div`
     display:flex;
     flex-direction: column;
@@ -43,7 +58,7 @@ export default function RootLayout(){
         }
     }, [isMobile])
     return(
-        <div style={{ display: "flex",width: "100%"}}>
+        <div style={{ display: "flex",width: "100%", minHeight: "100vh"}}>
             <SidebarNavigation 
             isCollapsed={isSidebarCollapsed}
             onToggleCollapse={handleToggleSidebar}
@@ -51,13 +66,37 @@ export default function RootLayout(){
             onMobileClose={handleMobileMenuClose} />
             
             {/* MENU */}
-            <ContentWrapper >
+            <Box
+                sx={{
+                flexGrow: 1,
+                display: "flex",
+                flexDirection: "column",
+                marginLeft: {
+                    xs: 0,
+                    md: isSidebarCollapsed ? "80px" : "280px",
+                },
+                transition: "margin-left 0.3s ease-in-out",
+                }}
+            >
                     
-                    <DashboardHeader onMobileMenuToggle={handleMobileMenuToggle}></DashboardHeader>
+                        <DashboardHeader onMobileMenuToggle={handleMobileMenuToggle} 
+                        isSidebarCollapsed={isSidebarCollapsed}
+                        ></DashboardHeader>
                     
-                    <Outlet />
+
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            backgroundColor: "#f5f5f5",
+                            overflow: "auto",
+                            marginTop: "80px", // Account for fixed header height
+                            minHeight: "calc(100vh - 64px)",
+                        }}
+                    >
+                        <Outlet />
+                    </Box>
                 
-            </ContentWrapper>
+            </Box>
            
         </div>
     )

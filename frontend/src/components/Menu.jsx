@@ -16,9 +16,12 @@ import {
 } from "@mui/icons-material"
 import { useIsMobile } from "../utils/useMobile"
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-export default function DashboardHeader({ onMobileMenuToggle }) {
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+export default function DashboardHeader({ onMobileMenuToggle,isSidebarCollapsed }) {
   const isMobile = useIsMobile()
-
+  const navigate = useNavigate()
+  const [keyword,setKeyword] = useState("")
   const currentDate = new Date().toLocaleDateString("vi-VN", {
     weekday: isMobile ? undefined : "long",
     day: "2-digit",
@@ -26,16 +29,29 @@ export default function DashboardHeader({ onMobileMenuToggle }) {
     year: "numeric",
   })
 
+  const handleSearch = ()=>{
+    navigate(`/task/search/${keyword}`)
+  }
+  
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  
   return (
     <Paper elevation={1} sx={{ width: "100%" }}>
       <AppBar
-        position="static"
-        elevation={0}
-        sx={{
-          
-          backgroundColor: "#ffffff",
-          borderBottom: "1px solid #e0e0e0",
-        }}
+         position="fixed"
+  elevation={0}
+  sx={{
+    backgroundColor: "#ffffff",
+    borderBottom: "1px solid #e0e0e0",
+    marginLeft: { md: isSidebarCollapsed ? "80px" : "280px" },
+    width: { md: isSidebarCollapsed ? "calc(100% - 80px)" : "calc(100% - 280px)" },
+    transition: "margin-left 0.3s ease-in-out, width 0.3s ease-in-out"
+  }}
       >
         <Toolbar sx={{ justifyContent: "space-between", py: 1, px: { xs: 1, sm: 2 } }}>
           {/* Mobile Menu Button + Logo Section */}
@@ -74,6 +90,9 @@ export default function DashboardHeader({ onMobileMenuToggle }) {
                 variant="outlined"
                 placeholder="Search your task here..."
                 size="small"
+                value={keyword}
+                onKeyDown={handleKeyDown}
+                onChange={(e)=>setKeyword(e.target.value)}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     backgroundColor: "#f8f9fa",
@@ -95,6 +114,7 @@ export default function DashboardHeader({ onMobileMenuToggle }) {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
+                        onClick={()=>handleSearch()}
                         size="small"
                         sx={{
                           backgroundColor: "#ff4444",
@@ -119,6 +139,7 @@ export default function DashboardHeader({ onMobileMenuToggle }) {
            
 
             <IconButton
+              onClick={()=>{navigate("/user")}}
               sx={{
                 backgroundColor: "#ff4444",
                 color: "white",
@@ -130,18 +151,7 @@ export default function DashboardHeader({ onMobileMenuToggle }) {
               <AccountCircleIcon fontSize={isMobile ? "small" : "medium"} />
             </IconButton>
 
-            <IconButton
-              sx={{
-                backgroundColor: "#ff4444",
-                color: "white",
-                "&:hover": { backgroundColor: "#ff3333" },
-                width: { xs: 36, sm: 40 },
-                height: { xs: 36, sm: 40 },
-              }}
-            >
-              
-              <CalendarMonthIcon fontSize={isMobile ? "small" : "medium"} />
-            </IconButton>
+           
 
             {/* Date - Hidden on very small screens */}
             <Box sx={{ ml: { xs: 1, sm: 2 }, textAlign: "right", display: { xs: "none", sm: "block" } }}>

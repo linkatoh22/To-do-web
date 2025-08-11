@@ -34,7 +34,7 @@ export function TaskCard({TaskData}){
 
     return(
 
-        <a  href={`/detail-task/${TaskData?.id}`}
+        <a  href={`/task/detail-task/${TaskData?.id}`}
             style={{ textDecoration: 'none', color: 'inherit',cursor:"pointer" }}
             >
             <Card sx={{p:2,border: "1px solid #A1A3AB",borderRadius:4,display:'flex',gap:"1rem",justifyContent:"center",
@@ -83,7 +83,7 @@ export function TaskCard({TaskData}){
                     
                 </Box>
 
-                <MoreHorizIcon sx={{fontSize:"1.6rem",cursor:"pointer"}}></MoreHorizIcon>
+               
             </Card>
         </a>
     )

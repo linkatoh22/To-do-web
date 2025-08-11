@@ -54,3 +54,17 @@ export const fetchResendOTP = createAsyncThunk(
         }
     }
 )
+
+
+export const fetchLogOut = createAsyncThunk(
+    "auth/fetchLogOut",
+    async(_,{rejectWithValue })=>{
+        try{
+            const response = await AuthApi.fetchLogOut();
+            return response.data
+        }
+        catch(error){
+            return rejectWithValue (error.response?.data || error.message);
+        }
+    }
+)

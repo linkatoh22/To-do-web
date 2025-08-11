@@ -4,10 +4,15 @@ export const AuthContext=createContext();
 
 export function AuthProvider ({children}){
     const [accessToken,setAccessToken] = useState(null)
-    
-    const login = (token) =>{
+    const [username,setUsername] = useState("")
+    const [email,setEmail] = useState("")
+
+    const login = (token,{username,email}) =>{
         setAccessToken(token);
         localStorage.setItem('accessToken',token)
+        
+        setUsername(username)
+        setEmail(email)
     }
 
     const logout = ()=>{
@@ -24,7 +29,7 @@ export function AuthProvider ({children}){
     }, []);
 
     return(
-        <AuthContext.Provider value={{accessToken,login,logout}}>
+        <AuthContext.Provider value={{accessToken,username,email,login,logout}}>
             {children}
         </AuthContext.Provider>
     )

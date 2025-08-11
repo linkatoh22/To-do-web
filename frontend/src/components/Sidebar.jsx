@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Box,
   List,
@@ -28,35 +28,83 @@ import {
   ChevronLeft as ChevronLeftIcon,
 } from "@mui/icons-material"
 import { useIsMobile } from "../utils/useMobile"
+import { useLocation, useNavigate } from "react-router-dom"
+import { useContext } from "react"
+import { AuthContext } from "../context/authContext"
+import { fetchLogOut } from "../redux/thunk/authThunk"
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const menuItems = [
-  { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
-  { id: "vital-task", label: "Vital Task", icon: <VitalTaskIcon /> },
-  { id: "my-task", label: "My Task", icon: <MyTaskIcon /> },
-  { id: "task-categories", label: "Task Categories", icon: <TaskCategoriesIcon /> },
-  { id: "settings", label: "Settings", icon: <SettingsIcon /> },
-  { id: "help", label: "Help", icon: <HelpIcon /> },
+  { id: "dashboard", label: "Dashboard", icon: <DashboardIcon />,link:"/" },
+  { id: "group", label: "Nhóm công việc", icon: <VitalTaskIcon />,link:"/group" },
+  { id: "task", label: "Công việc", icon: <MyTaskIcon />,link:"/task" },
+  { id: "users", label: "Thông tin cá nhân", icon: <TaskCategoriesIcon />,link:"/user" },
+  // { id: "settings", label: "Settings", icon: <SettingsIcon /> },
+  // { id: "help", label: "Help", icon: <HelpIcon /> },
 ]
 
 export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMobileOpen = false, onMobileClose }) {
+  const dispatch = useDispatch();
+  const {loading} = useSelector(s=>s.auth)
+  const {username,email,logout} = useContext(AuthContext)
+  const navigate = useNavigate()
   const [activeItem, setActiveItem] = useState("dashboard")
   const isMobile = useIsMobile()
 
-  const handleMenuClick = (itemId) => {
+
+
+  const handleLogout = async ()=>{
+    
+    const response = await dispatch(fetchLogOut())
+    if (response?.payload?.status == "Success") {
+                toast.success("Đăng xuất thành công!")
+                logout();
+                navigate("/dang-nhap")
+    
+    } else {
+        toast.error("Lỗi: " + response?.payload?.message);
+    }
+    
+  }
+
+
+  const handleMenuClick = (itemId,Link) => {
     if (itemId === "logout") {
-      console.log("Logout clicked")
-      return
+      handleLogout();
     }
     setActiveItem(itemId)
+    navigate(Link)
     if (isMobile && onMobileClose) {
       onMobileClose()
     }
+    
   }
+
+
+  const ORIGIN_URL = import.meta.env.VITE_ORIGIN;
+
+  const location = useLocation();
+
+  useEffect(()=>{
+      const currentUrl = window.location.href;
+
+      if (currentUrl.startsWith(`${ORIGIN_URL}/group`))
+        setActiveItem("group")
+      else if(currentUrl.startsWith(`${ORIGIN_URL}/task`))
+        setActiveItem("task")
+      else if(currentUrl.startsWith(`${ORIGIN_URL}/users`))
+        setActiveItem("user")
+      else if(currentUrl.startsWith("/"))
+        setActiveItem("dashboard")
+
+  },[location])
+
+
 
   const sidebarContent = (
     <Box
       sx={{
-        
         width: isMobile ? 280 : isCollapsed ? 80 : 280,
         height: "100vh",
         backgroundColor: "#ff5757",
@@ -65,6 +113,10 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
         flexDirection: "column",
         transition: isMobile ? "none" : "width 0.3s ease-in-out",
         overflow: "hidden",
+        position: isMobile ? "relative" : "fixed",
+        
+        left: 0,
+        zIndex: (theme) => theme.zIndex.drawer,
       }}
     >
       <Box sx={{ p: isCollapsed && !isMobile ? 3 : 3, textAlign: "center" }}>
@@ -102,7 +154,7 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
                 fontSize: { xs: "1.1rem", sm: "1.25rem" },
               }}
             >
-              Sundar Gurung
+              {username??"Chưa cập nhập"}
             </Typography>
             <Typography
               variant="body2"
@@ -111,7 +163,7 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
                 fontSize: { xs: "0.8rem", sm: "0.875rem" },
               }}
             >
-              sundar.gurung@gmail.com
+             {email??"Chưa cập nhập"}
             </Typography>
           </>
         )}
@@ -123,7 +175,7 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
             <ListItem key={item.id} disablePadding sx={{ mb: 1 }}>
               <Tooltip title={isCollapsed && !isMobile ? item.label : ""} placement="right" arrow>
                 <ListItemButton
-                  onClick={() => handleMenuClick(item.id)}
+                  onClick={() => handleMenuClick(item.id,item.link??"logout")}
                   sx={{
                     borderRadius: "8px",
                     backgroundColor: activeItem === item.id ? "rgba(255, 255, 255, 1)" : "transparent",
@@ -164,7 +216,7 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
 
       <Box sx={{ p: isCollapsed && !isMobile ? 1 : 2, mt: "auto" }}>
         <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.2)", mb: 2 }} />
-        <Tooltip title={isCollapsed && !isMobile ? "Logout" : ""} placement="right" arrow>
+        <Tooltip title={isCollapsed && !isMobile ? "Đăng xuất" : ""} placement="right" arrow>
           <ListItemButton
             onClick={() => handleMenuClick("logout")}
             sx={{
@@ -188,7 +240,7 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
             </ListItemIcon>
             {(!isCollapsed || isMobile) && (
               <ListItemText
-                primary="Logout"
+                primary="Đăng xuất"
                 primaryTypographyProps={{
                   fontSize: { xs: "0.9rem", sm: "0.95rem" },
                 }}

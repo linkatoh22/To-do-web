@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit"
-import { fetchLogin,fetchSignUp,fetchResendOTP,fetchVerifyOTP } from "../thunk/authThunk";
+import { fetchLogin,fetchSignUp,fetchResendOTP,fetchVerifyOTP,fetchLogOut } from "../thunk/authThunk";
 
 const initialState = {
     
@@ -11,6 +11,8 @@ const initialState = {
     otpSent: false,
     otpVerified: false,
     signUpSuccess: false,
+
+    userInfo:null
 }
 
 const authSlice = createSlice({
@@ -56,6 +58,7 @@ const authSlice = createSlice({
             .addCase(fetchLogin.fulfilled, (state, action) => {
                 state.loading = false;
                 state.accessToken = action.payload.token.accessToken;
+                state.userInfo = action.payload.token.user;
                 state.error = null;
             })
             .addCase(fetchLogin.rejected, (state, action) => {
@@ -95,7 +98,22 @@ const authSlice = createSlice({
             .addCase(fetchResendOTP.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || "Gửi lại OTP thất bại";
-            });
+            })
+
+            
+
+            .addCase(fetchLogOut.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchLogOut.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(fetchLogOut.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Đăng xuất thật bại";
+            })
     }
 })
 

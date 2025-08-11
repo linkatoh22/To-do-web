@@ -11,7 +11,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditDocumentIcon from '@mui/icons-material/EditDocument';
 import { TaskCardNoNav } from "../TaskCardNoNav";
-import {fetchTaskSort,fetchDeleteTask} from "../../redux/thunk/taskThunk"
+import {fetchTaskSort,fetchDeleteTask,fetchTaskSortKeyword} from "../../redux/thunk/taskThunk"
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useSelector,useDispatch } from "react-redux";
 import dayjs from "dayjs";
@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import AddIcon from '@mui/icons-material/Add';
 import { AddDialog } from "../TaskDialog/AddDialog";
 import { LoadingContainer } from "../loadingContainer";
+import { useParams } from "react-router-dom";
 
 const ImageGroup = styled.img`
     width:30%; 
@@ -28,13 +29,16 @@ const ImageGroup = styled.img`
      border-radius: 10px;
 `
 
-export function AllTaskContainer(){
+export function AllTaskSearchContainer(){
     const {TaskSort,loading} = useSelector(s=>s.task)
+
+    const {keyword} = useParams();
     const dispatch = useDispatch();
     const [sortBy,setSortBy] = useState("")
     const [status,setStatus] = useState("")
     const [taskSelected, setTaskSelected] = useState(0)
 
+    
     const taskSortRender = useMemo(()=>{
         return TaskSort
     },[TaskSort])
@@ -49,11 +53,11 @@ export function AllTaskContainer(){
 
     useEffect(()=>{
         const fetchTaskSortFunc = async ()=>{
-            await dispatch(fetchTaskSort({sortBy:sortBy,status:status}))
+            await dispatch(fetchTaskSortKeyword({sortBy:sortBy,status:status,keyword:keyword}))
         }
 
         fetchTaskSortFunc();
-    },[sortBy,status])
+    },[sortBy,status,keyword])
 
     const handleselectedTask = (index)=>{
         setTaskSelected(index)
@@ -79,7 +83,7 @@ export function AllTaskContainer(){
             : "Chưa cập nhập";}
 
     const refetch = async ()=>{
-        await dispatch(fetchTaskSort({sortBy:sortBy,status:status}))
+        await dispatch(fetchTaskSortKeyword({sortBy:sortBy,status:status}))
     }
     const handleDeleteTask = async (id)=>{
         
@@ -304,18 +308,27 @@ export function AllTaskContainer(){
 
                     </Box>
                 
-            
-             <UpdateDialog TaskData={
+            {taskSortRender?.length>0?
+            <>
+                 <UpdateDialog TaskData={
                 taskSortRender[taskSelected]} 
                 open={openUpdate}
                 onClose={handleCloseUpdate}
                 onSuccess={refetch}></UpdateDialog>
-            <AddDialog 
-                open={openAdd}
-                onClose={handleCloseAdd}
-                onSuccess={refetch}
+                <AddDialog 
+                    open={openAdd}
+                    onClose={handleCloseAdd}
+                    onSuccess={refetch}
+                
+                ></AddDialog>
             
-            ></AddDialog>
+            </>
+            :
+            <></>
+            
+        
+            }
+            
 
             
         </Box>

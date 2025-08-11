@@ -57,7 +57,7 @@ export function LogInForm() {
 
             if (response.payload.status === "Success") {
                 toast.success("Đăng nhập thành công");
-                login(response.payload.token.accessToken);
+                login(response.payload.token.accessToken,response.payload.user);
                 navigate("/");
 
             } else {

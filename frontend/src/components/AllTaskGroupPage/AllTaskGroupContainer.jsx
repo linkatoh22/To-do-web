@@ -7,6 +7,9 @@ import {
   AccountCircle as AccountCircleIcon,
   Menu as MenuIcon
 } from "@mui/icons-material"
+
+
+
 import { useContext, useEffect, useMemo, useState } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditDocumentIcon from '@mui/icons-material/EditDocument';
@@ -21,6 +24,10 @@ import { UpdateDialog } from "../TaskDialog/UpdateDialog";
 import AddIcon from '@mui/icons-material/Add';
 import { fetchDeleteTask } from "../../redux/thunk/taskThunk";
 import { toast } from "react-toastify";
+
+
+import { LoadingContainer } from "../loadingContainer";
+
 const ImageGroup = styled.img`
     width:30%; 
     aspect-ratio: 1 / 1;
@@ -108,16 +115,14 @@ export function AllTaskGroupContainer(){
                         <Box sx={{p:3, mt:2, borderRadius:3,border: "1px solid #A1A3ABA1",width:"40%"}}>
                             <Box sx={{display:"flex",alignItems:"center",justifyContent:"space-between",py:1}}>
 
-
+                                
                                 <Typography variant="h7" sx={{fontWeight:600,display:"flex", alignItems:"center",cursor:"pointer",gap:1}} onClick={()=>SetOpenAdd(true)}>
                                     <AddIcon sx={{color:"#F24E1E",fontSize:"1.7rem"}}></AddIcon>
                                         <Box>  Thêm task mới</Box>
                                 </Typography>
-
-
-                                    {/* SELECT HERE */}
+                                   
                                 <Box sx={{display:"flex",gap:1,width:"50%",alignItems:"center"}}>
-                                    {/* SẮP XẾP THEO */}
+                                   
 
                                     <FormControl fullWidth size="small">
                                         <InputLabel id="demo-simple-select-label">Sắp xếp theo</InputLabel>
@@ -138,7 +143,7 @@ export function AllTaskGroupContainer(){
                                                 
                                             </Select>
                                     </FormControl>
-                                    {/* TRẠNG THÁI */}
+                                  
 
 
                                     <FormControl fullWidth size="small">
@@ -164,8 +169,13 @@ export function AllTaskGroupContainer(){
 
                             <Box sx={{height:"67vh",overflowY:"auto"}}>
 
+
+                                {loading?
                             
-                                <Box sx={{display:"flex",flexDirection:"column",gap:2,py:1}}>
+                                    <LoadingContainer/>
+
+                                    :
+                                    <Box sx={{display:"flex",flexDirection:"column",gap:2,py:1}}>
                                     {
                                         taskSortRender?.length>0?
                                         
@@ -184,7 +194,10 @@ export function AllTaskGroupContainer(){
                                         
                                     }
                                 
-                                </Box>
+                                    </Box>
+                                }
+                            
+                                
                             </Box>
                         </Box>
 
@@ -192,97 +205,113 @@ export function AllTaskGroupContainer(){
 
                 
                         <Box sx={{p:4, mt:2, borderRadius:3,border: "1px solid #A1A3ABA1",width:"50%",position:"relative"}}>
-
-                            {
-                                taskSortRender?.length>0?
-                                <>
-                                    <Box sx={{display:"flex",gap:3}}>
-                                        <ImageGroup 
-                                            src={taskSortRender[taskSelected]?.Pic??"https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
-                                            />
-                                        <Box>
-                                            <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                                                {taskSortRender[taskSelected]?.Name}
-                                            </Typography>
-                                            <Box pt={1}>
-                                                <Typography>Nhóm: {taskSortRender[taskSelected]?.Group.Name?? "Chưa cập nhập"}</Typography>
-                                                <Typography>Ưu tiên: {taskSortRender[taskSelected]?.Priority ?? "Chưa cập nhập"}</Typography>
-                                                <Typography>Trạng thái: {taskSortRender[taskSelected]?.Status?? "Chưa cập nhập"}</Typography>
-                                                <Typography>Ngày bắt đầu: {dateConvert(taskSortRender[taskSelected]?.StartDate)}
-                                                </Typography>
-                                                <Typography>Ngày kết thúc: {dateConvert(taskSortRender[taskSelected]?.EndDate)}</Typography>
-
-                                                
-                                            </Box>
-                                        </Box>
-
-                                    </Box>
-
-                                    <Box sx={{overflowY:"auto"}}>
-                                        <Box mt={1}>
-                                            <Typography variant="h6" sx={{fontWeight:600}}>
-                                                Miêu tả:
-                                            </Typography>
-                                            <Typography sx={{fontSize:"1.2rem"}}>
-                                                {taskSortRender[taskSelected]?.Description?? "Chưa cập nhập"}
-                                            </Typography>
-                                        </Box>
-                                        
-                                        <Box mt={1}>
-                                            <Typography variant="h6" sx={{fontWeight:600}}>
-                                                Note bổ sung:
-                                            </Typography>
-                                            <Typography sx={{fontSize:"1.2rem"}}>
-                                                {taskSortRender[taskSelected]?.AdditionalNotes?? "Chưa cập nhập"}
-                                            </Typography>
-                                        </Box>
-
-                                    </Box>
-
-                                    <Box sx={{position:"absolute",bottom:0,right:0,p:2,display:"flex", gap:3}}>
-                                        <IconButton
-                                            onClick={()=>handleDeleteTask(taskSortRender[taskSelected]?.id)}
-                                            sx={{
-                                                backgroundColor: "#ff4444",
-                                                color: "white",
-                                                "&:hover": { backgroundColor: "#ff3333" },
-                                                width: { xs: 36, sm: 50 },
-                                                height: { xs: 36, sm: 50 },
-                                                fontSize: { xs: "small", sm: "medium" },
-                                                borderRadius: 2
-                                            }}
-                                            >
-                                            
-                                            <DeleteIcon />
-                                        </IconButton>
-
-
-
-                                        <IconButton
-                                            onClick={()=>SetOpenUpdate(true)}
-                                            sx={{
-                                                backgroundColor: "#ff4444",
-                                                color: "white",
-                                                "&:hover": { backgroundColor: "#ff3333" },
-                                                width: { xs: 36, sm: 50 },
-                                                height: { xs: 36, sm: 50 },
-                                                fontSize: { xs: "small", sm: "medium" },
-                                                borderRadius: 2
-                                            }}
-                                            >
-                                            
-                                            <EditDocumentIcon  />
-                                        </IconButton>
-
-
-                                    </Box>
-                                
-                                </>
-                                :
-                                <Box sx={{textAlign:"center"}}>Không có dữ liệu hiển thị</Box>
-                                
                             
-                            }           
+
+                            {loading?
+                            
+                                    <LoadingContainer/>
+
+                                    :
+                                    <>
+                                        {
+                                            taskSortRender?.length>0?
+                                            <>
+                                                <Box sx={{display:"flex",gap:3}}>
+                                                    <ImageGroup 
+                                                        src={taskSortRender[taskSelected]?.Pic??"https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
+                                                        />
+                                                    <Box>
+                                                        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                                                            {taskSortRender[taskSelected]?.Name}
+                                                        </Typography>
+                                                        <Box pt={1}>
+                                                            <Typography>Nhóm: {taskSortRender[taskSelected]?.Group.Name?? "Chưa cập nhập"}</Typography>
+                                                            <Typography>Ưu tiên: {taskSortRender[taskSelected]?.Priority ?? "Chưa cập nhập"}</Typography>
+                                                            <Typography>Trạng thái: {taskSortRender[taskSelected]?.Status?? "Chưa cập nhập"}</Typography>
+                                                            <Typography>Ngày bắt đầu: {dateConvert(taskSortRender[taskSelected]?.StartDate)}
+                                                            </Typography>
+                                                            <Typography>Ngày kết thúc: {dateConvert(taskSortRender[taskSelected]?.EndDate)}</Typography>
+
+                                                            
+                                                        </Box>
+                                                    </Box>
+
+                                                </Box>
+
+                                                <Box sx={{overflowY:"auto"}}>
+                                                    <Box mt={1}>
+                                                        <Typography variant="h6" sx={{fontWeight:600}}>
+                                                            Miêu tả:
+                                                        </Typography>
+                                                        <Typography sx={{fontSize:"1.2rem"}}>
+                                                            {taskSortRender[taskSelected]?.Description?? "Chưa cập nhập"}
+                                                        </Typography>
+                                                    </Box>
+                                                    
+                                                    <Box mt={1}>
+                                                        <Typography variant="h6" sx={{fontWeight:600}}>
+                                                            Note bổ sung:
+                                                        </Typography>
+                                                        <Typography sx={{fontSize:"1.2rem"}}>
+                                                            {taskSortRender[taskSelected]?.AdditionalNotes?? "Chưa cập nhập"}
+                                                        </Typography>
+                                                    </Box>
+
+                                                </Box>
+
+                                                <Box sx={{position:"absolute",bottom:0,right:0,p:2,display:"flex", gap:3}}>
+                                                    <IconButton
+                                                        onClick={()=>handleDeleteTask(taskSortRender[taskSelected]?.id)}
+                                                        sx={{
+                                                            backgroundColor: "#ff4444",
+                                                            color: "white",
+                                                            "&:hover": { backgroundColor: "#ff3333" },
+                                                            width: { xs: 36, sm: 50 },
+                                                            height: { xs: 36, sm: 50 },
+                                                            fontSize: { xs: "small", sm: "medium" },
+                                                            borderRadius: 2
+                                                        }}
+                                                        >
+                                                        
+                                                        <DeleteIcon />
+                                                    </IconButton>
+
+
+
+                                                    <IconButton
+                                                        onClick={()=>SetOpenUpdate(true)}
+                                                        sx={{
+                                                            backgroundColor: "#ff4444",
+                                                            color: "white",
+                                                            "&:hover": { backgroundColor: "#ff3333" },
+                                                            width: { xs: 36, sm: 50 },
+                                                            height: { xs: 36, sm: 50 },
+                                                            fontSize: { xs: "small", sm: "medium" },
+                                                            borderRadius: 2
+                                                        }}
+                                                        >
+                                                        
+                                                        <EditDocumentIcon  />
+                                                    </IconButton>
+
+
+                                                </Box>
+                                            
+                                            </>
+                                            :
+                                             <Box sx={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                                                <Typography>
+                                                Không có dữ liệu hiển thị
+                                                </Typography>
+                                            </Box>
+                                            
+                                        
+                                            }
+                                    </>
+                                    
+                                }
+
+                                       
                             
                         </Box>
                     

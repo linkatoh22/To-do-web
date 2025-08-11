@@ -15,6 +15,8 @@ import { use, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUpdateGroup } from "../../redux/thunk/groupThunk";
 import { toast } from "react-toastify";
+import { LoadingContainer } from "../loadingContainer";
+
 const ImageGroup = styled.img`
         width:8%;
         aspect-ratio: 1 / 1;
@@ -26,9 +28,10 @@ const ImageGroup = styled.img`
 
 export function UserDetailContainer(){
     const dispatch = useDispatch()
-    const {Profile,loading} = useSelector(s=>s.user)
+    
     const [isEdit,setIsEdit]= useState(false);
     
+    const {Profile,loading} = useSelector(s=>s.user)
     useEffect(()=>{
         const fetchProfileRender = async() =>{
             await dispatch(fetchViewProfile());
@@ -110,70 +113,79 @@ export function UserDetailContainer(){
                                     />
 
                                 <Box>
-                                    <Typography variant="h5" sx={{ fontWeight: 600 }}>Sundar Gurung</Typography>
-                                    <Typography variant="h7">SundarGurung@gmail</Typography>
+                                    <Typography variant="h5" sx={{ fontWeight: 600 }}>{Profile?.username??"Chưa cập nhập"}</Typography>
+                                    <Typography variant="h7">{Profile?.email??"Chưa cập nhập"}</Typography>
                                 </Box>
                         </Box>
 
                         <Box sx={{p:5, mt:2, borderRadius:3,border: "1px solid #A1A3ABA1",display:"flex",flexDirection:"column",gap:2}}>
+                            
+                            {loading?
+                            
+                                <LoadingContainer/>
 
-                            <form onSubmit={handleSubmit}>
-                            <Box sx={{width:"65%"}}>
-                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Họ Tên:</Typography>
-                                <TextField fullWidth  id="fullWidth" required 
-                                    disabled={!isEdit}
+                                    :
+                                <form onSubmit={handleSubmit}>
+                                    <Box sx={{width:"65%"}}>
+                                        <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Họ Tên:</Typography>
+                                        <TextField fullWidth  id="fullWidth" required 
+                                            disabled={!isEdit}
 
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": {
-                                            borderRadius: 3      
-                                        },
-                                        "& .MuiInputBase-input": {
-                                            py: 1.2, 
-                                        }
-                                    }}
-                                    onChange={(e)=>handleInputChange("username",e.target.value)} 
-                                    value={formData.username}
-                                />
-                            </Box>
+                                            sx={{
+                                                "& .MuiOutlinedInput-root": {
+                                                    borderRadius: 3      
+                                                },
+                                                "& .MuiInputBase-input": {
+                                                    py: 1.2, 
+                                                }
+                                            }}
+                                            onChange={(e)=>handleInputChange("username",e.target.value)} 
+                                            value={formData.username}
+                                        />
+                                    </Box>
 
-                            <Box sx={{width:"65%"}}>
-                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Tên:</Typography>
-                                <TextField fullWidth  id="fullWidth" required  disabled={!isEdit} 
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": {
-                                            borderRadius: 3      
-                                        },
-                                        "& .MuiInputBase-input": {
-                                            py: 1.2, 
-                                        }
-                                    }}
-                                    onChange={(e)=>handleInputChange("first_name",e.target.value)} 
-                                    value={formData.first_name}
-                                />
-                            </Box>
+                                    <Box sx={{width:"65%"}}>
+                                        <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Tên:</Typography>
+                                        <TextField fullWidth  id="fullWidth" required  disabled={!isEdit} 
+                                            sx={{
+                                                "& .MuiOutlinedInput-root": {
+                                                    borderRadius: 3      
+                                                },
+                                                "& .MuiInputBase-input": {
+                                                    py: 1.2, 
+                                                }
+                                            }}
+                                            onChange={(e)=>handleInputChange("first_name",e.target.value)} 
+                                            value={formData.first_name}
+                                        />
+                                    </Box>
 
 
-                            <Box sx={{width:"65%"}}>
-                                <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Họ:</Typography>
-                                <TextField fullWidth  id="fullWidth" required  disabled={!isEdit}
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": {
-                                            borderRadius: 3      
-                                        },
-                                        "& .MuiInputBase-input": {
-                                            py: 1.2, 
-                                        }
-                                    }}
-                                    onChange={(e)=>handleInputChange("last_name",e.target.value)} 
-                                    value={formData.last_name}
-                                />
-                            </Box>
-                            </form>
+                                    <Box sx={{width:"65%"}}>
+                                        <Typography sx={{fontSize:"1.1rem",fontWeight:"bold"}}>Họ:</Typography>
+                                        <TextField fullWidth  id="fullWidth" required  disabled={!isEdit}
+                                            sx={{
+                                                "& .MuiOutlinedInput-root": {
+                                                    borderRadius: 3      
+                                                },
+                                                "& .MuiInputBase-input": {
+                                                    py: 1.2, 
+                                                }
+                                            }}
+                                            onChange={(e)=>handleInputChange("last_name",e.target.value)} 
+                                            value={formData.last_name}
+                                        />
+                                    </Box>
+                                 </form>
+                                    
+                            }
+
+                            
 
 
                             <Box sx={{width:"70%", display:"flex", gap:2, alignItems:"center"}}>
                                 <Button 
-                                disable={loading}
+                                disabled={loading}
                                 variant= {isEdit?"contained":"outlined" }
                                 onClick={(e)=>{
                                     handleEditClick()

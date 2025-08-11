@@ -9,7 +9,8 @@ const {createTask,updateTask,
                 getNearestDeadlineTasks,
                 getNearestDeadlineComplete,
                 getAllTaskOfUser,
-                getAllTaskOfGroup
+                getAllTaskOfGroup,
+                SearchTask
         } = require("../controllers/TaskController")
 
 
@@ -30,6 +31,8 @@ router.route("/get-nearest-deadline-complete").get(AuthMiddleware,getNearestDead
 
 //My task:
 router.route("/get-all-task-of-user").get(AuthMiddleware,getAllTaskOfUser)
+
+router.route("/get-task-keyword").get(AuthMiddleware,SearchTask)
 
 //Task Group:
 router.route("/get-all-task-of-group").get(AuthMiddleware,getAllTaskOfGroup)

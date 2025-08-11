@@ -78,9 +78,9 @@ export function AddDialog({open,onClose,onSuccess}){
 
     const [formData, setFormData] = useState({
             Name: "",
-            GroupId: "",
-            Status:"",
-            Priority: "",
+            GroupId: null,
+            Status:null,
+            Priority: null,
             StartDate:dayjs(),
             EndDate:dayjs(),
             Description: "",
@@ -211,7 +211,8 @@ export function AddDialog({open,onClose,onSuccess}){
                                             row
                                             aria-labelledby="demo-row-radio-buttons-group-label"
                                             name="row-radio-buttons-group"
-                                            required onChange={(e)=>handleInputChange("Status",e.target.value)} 
+                                            required 
+                                            onChange={(e)=>handleInputChange("Status",e.target.value)} 
                                             value={formData.Status}
                                         >
                                             <FormControlLabel value="Chưa bắt đầu" control={<Radio />} label="Chưa bắt đầu" />
@@ -247,7 +248,7 @@ export function AddDialog({open,onClose,onSuccess}){
                                             
                                             
                                             <Select
-                                                required 
+                                                
                                                 onChange={(e)=>handleInputChange("GroupId",e.target.value)} 
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
@@ -256,7 +257,7 @@ export function AddDialog({open,onClose,onSuccess}){
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                                
                                             >
-                                                <MenuItem value="">Không chọn</MenuItem>
+                                                <MenuItem value={null}>Không chọn</MenuItem>
                                                 {AllGroupRender?.map((item)=>{
                                                     return <MenuItem value={item?.id}>{item.Name}</MenuItem>
                                                 })}

@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router();
 const {AuthMiddleware} = require("../middlewares/authMiddleware")
 
-const {logIn,signUp,changePassword} = require("../controllers/authenticateController")
+const {logIn,signUp,changePassword,logOut} = require("../controllers/authenticateController")
 
 const {sendEmailVerify,verifyOTP,reSendOTP,sendPassLinkEmail,changePasswordWithToken,verifiedTokenLink} = require("../controllers/emailController");
 
@@ -12,6 +12,7 @@ const { handleAccessToken } = require("../controllers/tokenControllers");
 
 router.post("/log-in",logIn);
 router.post("/sign-up",signUp);
+router.get("/log-out",logOut);
 
 
 router.get("/send-email-verify",sendEmailVerify);

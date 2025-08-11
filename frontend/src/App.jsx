@@ -18,7 +18,7 @@ import { DetailTaskPage } from './pages/DetailTaskPage'
 import { UserDetailContainer } from './components/UserDetailPage/UserDetailContainer'
 import { AllTaskGroupPage } from './pages/AllTaskGroupPage'
 import { UserPasswordPage } from './pages/UserPasswordPage'
-
+import { AllTaskSearchPage } from './pages/AllTaskSearchPage'
 import { ThemeProvider } from "@mui/material/styles";
 import { ToastContainer } from "react-toastify";
 import theme from "./theme"; 
@@ -42,9 +42,12 @@ function App() {
                           <Route element={<PrivateRoute/>}>
                             <Route path="/" element={<HomePage />} />
                             <Route path="/group" element={<GroupPage />} />
-                            <Route path="/all-task" element={<AllTaskPage />} />
-                            <Route path="group/all-task/:groupId" element={<AllTaskGroupPage />} />
-                            <Route path="/detail-task/:id" element={<DetailTaskPage />} />
+                            <Route path="/task" element={<AllTaskPage />} />
+                            
+                            <Route path="/task/search/:keyword" element={<AllTaskSearchPage />} />
+
+                            <Route path="/group/task/:groupId" element={<AllTaskGroupPage />} />
+                            <Route path="/task/detail-task/:id" element={<DetailTaskPage />} />
                             <Route path="/user" element={<UserDetailContainer />} />
                             <Route path="/user/change-password" element={<UserPasswordPage />} />
                           </Route>

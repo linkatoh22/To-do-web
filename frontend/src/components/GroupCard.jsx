@@ -38,7 +38,7 @@ export function GroupCard({groupData,refetch}){
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
 
@@ -61,13 +61,22 @@ export function GroupCard({groupData,refetch}){
     const handleClose = (type) => {
         if (type === "edit") {
             setOpenEditDialog(true)
+           
         }
         else if (type === "view") {
             setOpenViewDialog(true)
+            
+        }
+        else if(type=== "viewAll"){
+             navigate(`/group/task/${groupData?.id}`)
         }
         setAnchorEl(null);
     };
 
+    // const handleNavViewAll = (groupId)=>{
+    //     if(groupId)
+    //         navigate(`/group/task/${groupId}`)
+    // }
     const handleDeleteGroup = async(id)=>{
         const response = await dispatch(fetchDeleteGroup({groupId:id}))
 
@@ -125,7 +134,10 @@ export function GroupCard({groupData,refetch}){
                         {/* <EditIcon /> */}
                         Xem chi tiết
                         </MenuItem>
-                        <MenuItem onClick={()=>handleClose("viewAll")} disableRipple>
+                        <MenuItem onClick={()=>{
+                            handleClose("viewAll")
+                            
+                            }} disableRipple>
                         {/* <FileCopyIcon /> */}
                         Xem danh sách
                         </MenuItem>

@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit"
-import { fetchAllTask,fetchDetailTask,fetchTaskGroupSort,fetchTaskSort,fetchUpdateTask,fetchDeleteTask,fetchCreateTask } from "../thunk/taskThunk"
+import { fetchAllTask,fetchDetailTask,fetchTaskGroupSort,fetchTaskSort,fetchUpdateTask,fetchDeleteTask,fetchCreateTask,fetchTaskSortKeyword } from "../thunk/taskThunk"
 
 const initialState = {
     loading:false,
@@ -122,6 +122,22 @@ const taskSlice = createSlice({
             .addCase(fetchCreateTask.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || "Update task thất bại";
+            })
+
+
+            .addCase(fetchTaskSortKeyword.pending,(state)=>{
+                state.loading = true;
+                state.error = null;
+                
+            })
+            .addCase(fetchTaskSortKeyword.fulfilled, (state, action) => {
+                state.loading = false;
+                state.TaskSort = action.payload.data;
+                state.error = null;
+            })
+            .addCase(fetchTaskSortKeyword.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Lấy Task gần deadline thất bại";
             })
 
     }

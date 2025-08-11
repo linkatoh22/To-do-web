@@ -20,7 +20,7 @@ import { AddGroupDialog } from "../GroupDialog/AddGroupDialog";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllGroup,fetchDetailGroup } from "../../redux/thunk/groupThunk";
-
+import { LoadingContainer } from "../loadingContainer";
 export function GroupPageContainer(){
     const dispatch = useDispatch();
     const {AllGroup,GroupDetail,loading} =useSelector(s=>s.group) 
@@ -52,8 +52,8 @@ export function GroupPageContainer(){
 
     return (
         <>
-        <Box sx={{p:6}}>
-             <Box sx={{p:6, mt:2, borderRadius:1,border: "1px solid #A1A3ABA1"}}>
+        <Box sx={{p:3}}>
+             <Box sx={{p:3, mt:2, borderRadius:1,border: "1px solid #A1A3ABA1",minHeight:"90vh"}}>
                 <Box sx={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
 
                     
@@ -68,20 +68,33 @@ export function GroupPageContainer(){
                     
                 </Box>
 
-                <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12 }}>
-
-                    {
-                        allGroupRender?.length > 0
-                            ? allGroupRender.map((item) => (
-                                <Grid item size={{ xs: 2, sm: 4, md: 3 }}>
-                                    <GroupCard groupData ={item} refetch={refetch}></GroupCard>
-                                </Grid>
-                            ))
-                            : <div>Không có data</div>
-                    }
 
 
-                </Grid>
+                {
+                    loading?
+                        
+                        <LoadingContainer/>
+
+                            :
+                        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12 }}>
+
+                            {
+                                allGroupRender?.length > 0
+                                    ? allGroupRender.map((item) => (
+                                        <Grid item size={{ xs: 2, sm: 4, md: 3 }}>
+                                            <GroupCard groupData ={item} refetch={refetch}></GroupCard>
+                                        </Grid>
+                                    ))
+                                    : <div>Không có data</div>
+                            }
+
+
+                        </Grid>
+                                
+                }
+
+
+                
 
 
              </Box>

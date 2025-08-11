@@ -36,6 +36,15 @@ export const TaskApi ={
                 status
             }
         }),
+    fetchTaskSortKeyword : ({sortBy,status,keyword})=>
+        axiosClient.get(`${BASE_URL}/task/get-task-keyword`,{
+            useAuth:true,
+            params: {
+                sortBy,
+                status,
+                keyword
+            }
+        }),
     fetchTaskGroupSort : ({sortBy,status,groupId})=>
     axiosClient.get(`${BASE_URL}/task/get-all-task-of-group`,{
         useAuth:true,

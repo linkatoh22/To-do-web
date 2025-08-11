@@ -16,7 +16,7 @@ const AuthMiddleware = async (req,res,next)=>{
         const token = authHeader && authHeader.split(' ')[1];
         
         if(!token){
-            console.log("Access token thiếu hoặc không hợp lệ")
+            
             res.status(404)
             throw Error("Access token thiếu hoặc không hợp lệ");
             
