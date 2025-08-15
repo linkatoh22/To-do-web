@@ -34,6 +34,7 @@ nodemon index.js
 - dayjs
 - recharts
 - styled-components
+
 **2. Backend:**
 - bcrypt
 - cloudinary
