@@ -8,7 +8,7 @@ To-Do App is a web application for task management, allowing users to register, 
 - Dashboard Analytics – View statistics of tasks by status and priority with visual charts.
 - Search Functionality – Quickly find tasks by their name.
 - Password Recovery – Reset forgotten passwords via email with a secure link.
-- Profile Management – Update personal information and profile picture.
+- Profile Management – Update personal information.
 ## 2. Installation:
 **1. Clone repo:**
 ```bash
