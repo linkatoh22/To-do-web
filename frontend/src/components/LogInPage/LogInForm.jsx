@@ -176,6 +176,7 @@ export function LogInForm() {
                 }}>
 
                 <Button
+                    disabled={loading}
                     type="submit"
                     sx={{
                         
@@ -207,7 +208,8 @@ export function LogInForm() {
                     }}
                     variant="contained"
                     >
-                    Đăng nhập
+                        {loading? "Đang xử lý.. ":"Đăng nhập"}
+                    
                 </Button>
 
 

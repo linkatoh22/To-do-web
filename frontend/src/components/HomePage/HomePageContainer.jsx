@@ -29,8 +29,8 @@ import { AddDialog } from "../TaskDialog/AddDialog";
 import { useDispatch, useSelector } from "react-redux";
 import CircularProgress from '@mui/material/CircularProgress';
 import { fetchAllTask,fetchNearestDeadlineTask,fetchNearestCompleteTask,fetchCreateTask } from "../../redux/thunk/dashBoardThunk";
-
-
+import WavingHandIcon from '@mui/icons-material/WavingHand';
+import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported';
 export function HomePageContainer(){
     const dispatch = useDispatch();
     const {loading,AllTask,AllDeadlineTask,AllCompleteTask} = useSelector(s=>s.dashBoard)
@@ -119,13 +119,19 @@ export function HomePageContainer(){
 
                             </Box>
 
-                            <Box sx={{display:"flex",flexDirection:"column",gap:2,justifyContent:"center",height:"95%"}}> 
+                            <Box sx={{display:"flex",flexDirection:"column",gap:2,height:"95%",py:2}}> 
                                 {
                                     AllTaskDeadline?.length > 0
                                         ? AllTaskDeadline.map((item) => (
                                             <TaskCard TaskData={item} key={item.id} />
                                         ))
-                                        : <div>Không có data</div>
+                                        : 
+                                        <Box sx={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                                            <BrowserNotSupportedIcon></BrowserNotSupportedIcon>
+                                            <Typography>
+                                            Không có dữ liệu hiển thị. Bạn vui lòng hãy thêm công việc mới nhé!
+                                            </Typography>
+                                        </Box>
                                 }
                                 
                                 
@@ -257,7 +263,13 @@ export function HomePageContainer(){
                                                 ? AllTaskComplete.map((item) => (
                                                     <TaskCard TaskData={item} key={item.id} />
                                                 ))
-                                                : <div>Không có data</div>
+                                                : 
+                                            <Box sx={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                                                <BrowserNotSupportedIcon></BrowserNotSupportedIcon>
+                                                <Typography>
+                                                Không có dữ liệu hiển thị. Bạn vui lòng hãy thêm công việc mới nhé!
+                                                </Typography>
+                                            </Box>
                                         }
 
                                     </Box>

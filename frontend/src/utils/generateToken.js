@@ -4,7 +4,7 @@ const secretKey = import.meta.env.VITE_OTP_KEY;
 
 export const generateOtpLink = (userId) => {
     try {
-        console.log("Truyền userId vào nè: ", userId);
+        
         if (!secretKey) {
             throw new Error("VITE_OTP_KEY is not defined in environment variables");
         }

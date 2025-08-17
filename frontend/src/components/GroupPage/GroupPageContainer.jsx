@@ -21,6 +21,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllGroup,fetchDetailGroup } from "../../redux/thunk/groupThunk";
 import { LoadingContainer } from "../loadingContainer";
+import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported';
 export function GroupPageContainer(){
     const dispatch = useDispatch();
     const {AllGroup,GroupDetail,loading} =useSelector(s=>s.group) 
@@ -53,7 +54,7 @@ export function GroupPageContainer(){
     return (
         <>
         <Box sx={{p:3}}>
-             <Box sx={{p:3, mt:2, borderRadius:1,border: "1px solid #A1A3ABA1",minHeight:"90vh"}}>
+             <Box sx={{p:3, mt:2, borderRadius:1,border: "1px solid #A1A3ABA1",minHeight:"80vh"}}>
                 <Box sx={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
 
                     
@@ -76,7 +77,7 @@ export function GroupPageContainer(){
                         <LoadingContainer/>
 
                             :
-                        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12 }}  alignItems="stretch">
+                        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12 }}  sx={{height:"100%"}} alignItems="stretch">
 
                             {
                                 allGroupRender?.length > 0
@@ -85,7 +86,13 @@ export function GroupPageContainer(){
                                             <GroupCard groupData ={item} refetch={refetch}></GroupCard>
                                         </Grid>
                                     ))
-                                    : <div>Không có data</div>
+                                    : 
+                                    <Box sx={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                                                <BrowserNotSupportedIcon></BrowserNotSupportedIcon>
+                                                <Typography>
+                                                Không có dữ liệu hiển thị. Bạn vui lòng hãy thêm công việc mới nhé!
+                                                </Typography>
+                                    </Box>
                             }
 
 

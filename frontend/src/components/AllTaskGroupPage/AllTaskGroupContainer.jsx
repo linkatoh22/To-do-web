@@ -190,7 +190,12 @@ export function AllTaskGroupContainer(){
                                                     </div>
                                             })
                                         :
-                                        <div>Không có thông tin</div>
+
+                                        <Box sx={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                                                <Typography>
+                                                Không có dữ liệu hiển thị. Bạn vui lòng hãy thêm công việc mới nhé!
+                                                </Typography>
+                                            </Box>
                                         
                                     }
                                 

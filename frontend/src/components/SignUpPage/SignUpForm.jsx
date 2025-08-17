@@ -49,7 +49,10 @@ export function SignUpForm() {
       
         const response = await dispatch(fetchSignUp(formData));
         if (response.payload.status === "Success") {
-             const newUserId = response.payload.userId;
+
+            
+             const newUserId = response.payload.data.userId;
+           
             toast.success("Đăng ký thành công!");
             const tokenOtp = generateOtpLink(newUserId);
             navigate(`/xac-thuc-otp/${tokenOtp}`);
@@ -315,7 +318,8 @@ export function SignUpForm() {
                         }}
                         variant="contained"
                         >
-                        Đăng ký
+                            {loading? "Đang xử lý..." : "Đăng ký"}
+                        
                     </Button>
 
                     <Typography sx={

@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 import AddIcon from '@mui/icons-material/Add';
 import { AddDialog } from "../TaskDialog/AddDialog";
 import { LoadingContainer } from "../loadingContainer";
-
+import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported';
 const ImageGroup = styled.img`
     width:30%; 
     aspect-ratio: 1 / 1;
@@ -180,7 +180,12 @@ export function AllTaskContainer(){
                                                         </div>
                                                 })
                                             :
-                                            <div>Không có thông tin</div>
+                                            <Box sx={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                                                <BrowserNotSupportedIcon></BrowserNotSupportedIcon>
+                                                <Typography>
+                                                Không có dữ liệu hiển thị. Bạn vui lòng hãy thêm công việc mới nhé!
+                                                </Typography>
+                                            </Box>     
                                             
                                         }
                                     

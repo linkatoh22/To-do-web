@@ -78,7 +78,7 @@ export function OtpVerifyForm() {
       const handleResend = async () => {
        
         const response = await dispatch(fetchResendOTP({
-            userId: decryptedUserId  // ← Dùng userId đã decrypt
+            userId: decryptedUserId 
         }));
         if (response.payload.status === "Success") {
             toast.success("Đã gửi lại OTP thành công. Vui lòng kiểm tra email của bạn");
@@ -225,7 +225,7 @@ export function OtpVerifyForm() {
                             },
                             }}> 
                             
-                            Không nhận được OTP? <Link href="/dang-ky" onClick={()=>handleResend()}>Gửi lại OTP</Link> ngay</Typography>
+                            Không nhận được OTP? <Link onClick={()=>handleResend()}>Gửi lại OTP</Link> ngay</Typography>
                         )}
                     </Box>
                 </form>
