@@ -97,3 +97,6 @@
     
 }
 
+.recharts-tooltip-wrapper {
+  z-index: 9999 !important; /* đè tooltip lên trên chart và cả Box overlay */
+}

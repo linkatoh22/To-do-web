@@ -111,7 +111,7 @@ export function HomePageContainer(){
 
                                 <Typography variant="h6" sx={{fontWeight:600,display:"flex", alignItems:"center",cursor:"pointer",gap:1}} onClick={handleClickOpen}>
                                         <AddIcon sx={{color:"#F24E1E",fontSize:"1.7rem"}}></AddIcon>
-                                           <Box>  Thêm task mới</Box>
+                                           <Box>  Thêm công việc mới</Box>
                                 </Typography>
                                 
 
@@ -146,7 +146,7 @@ export function HomePageContainer(){
                     </Box>
 
 
-                    <Box sx={{width:"50%",height:"74vh"}} >
+                    <Box sx={{width:"50%",height:"75vh"}} >
                         {/* Trạng thái các task */}
                         <Paper elevation={2} sx={{p:4,height:"40%"}}>
 
@@ -215,7 +215,7 @@ export function HomePageContainer(){
 
 
                         {/* Các task đã hoàn thành */}
-                        <Paper elevation={2} sx={{p:4,mt:3,height:"43%"}}>
+                        <Paper elevation={2} sx={{p:4,mt:3.3,height:"43%"}}>
 
                             <Box sx={{display:"flex", alignItems:"center", justifyContent:"space-between",mb:1,height:"5%"}}>
 

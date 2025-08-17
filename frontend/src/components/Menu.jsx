@@ -88,7 +88,7 @@ export default function DashboardHeader({ onMobileMenuToggle,isSidebarCollapsed 
               <TextField
                 fullWidth
                 variant="outlined"
-                placeholder="Search your task here..."
+                placeholder="Nhập từ khóa tìm kiếm..."
                 size="small"
                 value={keyword}
                 onKeyDown={handleKeyDown}

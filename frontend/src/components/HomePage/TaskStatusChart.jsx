@@ -26,7 +26,7 @@ export function DonutChart({ Color, Status, AllStatus }) {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                 </Pie>
-                <Tooltip style={{zIndex:10}}/>
+                <Tooltip/>
             </PieChart>
             {/* Phần trăm ở giữa donut */}
             <Box

@@ -28,7 +28,7 @@ import {
   ChevronLeft as ChevronLeftIcon,
 } from "@mui/icons-material"
 import { useIsMobile } from "../utils/useMobile"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate, useRoutes } from "react-router-dom"
 import { useContext } from "react"
 import { AuthContext } from "../context/authContext"
 import { fetchLogOut } from "../redux/thunk/authThunk"
@@ -37,8 +37,9 @@ import { toast } from "react-toastify";
 
 const menuItems = [
   { id: "dashboard", label: "Dashboard", icon: <DashboardIcon />,link:"/" },
-  { id: "group", label: "Nhóm công việc", icon: <VitalTaskIcon />,link:"/group" },
   { id: "task", label: "Công việc", icon: <MyTaskIcon />,link:"/task" },
+  { id: "group", label: "Nhóm công việc", icon: <VitalTaskIcon />,link:"/group" },
+  
   { id: "users", label: "Thông tin cá nhân", icon: <TaskCategoriesIcon />,link:"/user" },
   // { id: "settings", label: "Settings", icon: <SettingsIcon /> },
   // { id: "help", label: "Help", icon: <HelpIcon /> },
@@ -85,20 +86,19 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
   const ORIGIN_URL = import.meta.env.VITE_ORIGIN;
 
   const location = useLocation();
+  
+  useEffect(() => {
+    const path = location.pathname
 
-  useEffect(()=>{
-      const currentUrl = window.location.href;
-
-      if (currentUrl.startsWith(`${ORIGIN_URL}/group`))
-        setActiveItem("group")
-      else if(currentUrl.startsWith(`${ORIGIN_URL}/task`))
-        setActiveItem("task")
-      else if(currentUrl.startsWith(`${ORIGIN_URL}/users`))
-        setActiveItem("user")
-      else if(currentUrl.startsWith("/"))
-        setActiveItem("dashboard")
-
-  },[location])
+    if (path.startsWith("/group"))
+      setActiveItem("group")
+    else if (path.startsWith("/task"))
+      setActiveItem("task")
+    else if (path.startsWith("/user"))
+      setActiveItem("users") // 👈 ở menuItems bạn để id="users" chứ không phải "user"
+    else if (path === "/")
+      setActiveItem("dashboard")
+}, [location])
 
 
 

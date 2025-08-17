@@ -62,7 +62,7 @@ export function GroupPageContainer(){
 
                     <Typography variant="h6" sx={{fontWeight:600,display:"flex", alignItems:"center",cursor:"pointer",gap:1}} onClick={handleClickOpen}> 
                             <AddIcon sx={{color:"#F24E1E",fontSize:"1.7rem"}}></AddIcon>
-                                <Box>  Thêm task mới</Box>
+                                <Box>  Thêm nhóm mới</Box>
                     </Typography>
 
                     
@@ -76,12 +76,12 @@ export function GroupPageContainer(){
                         <LoadingContainer/>
 
                             :
-                        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12 }}>
+                        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 9, md: 12 }}  alignItems="stretch">
 
                             {
                                 allGroupRender?.length > 0
                                     ? allGroupRender.map((item) => (
-                                        <Grid item size={{ xs: 2, sm: 4, md: 3 }}>
+                                        <Grid item size={{ xs: 2, sm: 4, md: 3 }}  style={{ display: "flex" }}>
                                             <GroupCard groupData ={item} refetch={refetch}></GroupCard>
                                         </Grid>
                                     ))

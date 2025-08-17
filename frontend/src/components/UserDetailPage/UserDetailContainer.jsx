@@ -98,7 +98,7 @@ export function UserDetailContainer(){
         <Box sx={{p:5}}>
                     <Box sx={{p:5, mt:2, borderRadius:3,border: "1px solid #A1A3ABA1",height:"73vh"}}>
                         
-                        <Typography variant="h6" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E"}}>Nhóm của bạn</Typography>
+                        <Typography variant="h6" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E",display: "inline-block"}}>Thông tin của bạn</Typography>
 
                         <Box sx={{display:"flex",gap:2,alignItems:"center",mb:2}}>
                                 <Avatar

@@ -38,8 +38,9 @@ function App() {
                 <BrowserRouter>
                       <Routes>  
 
+                      <Route element={<PrivateRoute/>}>
                         <Route path="/" element={<RootLayout />}>
-                          <Route element={<PrivateRoute/>}>
+                          
                             <Route path="/" element={<HomePage />} />
                             <Route path="/group" element={<GroupPage />} />
                             <Route path="/task" element={<AllTaskPage />} />
@@ -51,7 +52,7 @@ function App() {
                             <Route path="/user" element={<UserDetailContainer />} />
                             <Route path="/user/change-password" element={<UserPasswordPage />} />
                           </Route>
-                        </Route>
+                      </Route>
                         
                         
                           <Route path="/dang-nhap" element={<LoginPage />} />

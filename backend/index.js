@@ -12,7 +12,7 @@ const googleRoutes = require("./routes/GoogleAuthRoute")
 const errorHandler  = require("./middlewares/errorHandler")
 const cookieParser = require("cookie-parser");
 const sequelize = require("./configs/db");
-const User = require("./models/userModel");
+
 
 
 
@@ -22,22 +22,18 @@ const port = process.env.PORT || 3000;
 
 require("./models"); // Thêm dòng này để thiết lập các quan hệ giữa các model
 //Connect to PostgreSQL
+
 (async()=>{
     try{
         await sequelize.authenticate();
         console.log(`Đã kết nối database thành công!`)
         await sequelize.sync({ alter: true });
-
-        
-
     }
     catch(error){
         console.error(`Lỗi kết nối hoặc sync:`,error)
     }
 
 })();
-
-// app.use(cors())
 
 app.use(cors({
   origin: process.env.ORIGIN,

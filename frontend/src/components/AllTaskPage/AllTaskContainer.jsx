@@ -97,7 +97,7 @@ export function AllTaskContainer(){
     
     return(
         <Box sx={{p: 5}}>
-            <Typography variant="h5" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E"}}>Nhóm của bạn</Typography>
+            <Typography variant="h5" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E",display: "inline-block"}}>Nhóm của bạn</Typography>
          <Box sx={{display:"flex",gap:2}}>
             
 
@@ -107,7 +107,7 @@ export function AllTaskContainer(){
 
                             <Typography variant="h7" sx={{fontWeight:600,display:"flex", alignItems:"center",cursor:"pointer",gap:1}} onClick={()=>SetOpenAdd(true)}>
                                     <AddIcon sx={{color:"#F24E1E",fontSize:"1.7rem"}}></AddIcon>
-                                        <Box>  Thêm task mới</Box>
+                                        <Box>  Thêm công việc mới</Box>
                             </Typography>
 
                                 {/* SELECT HERE */}
