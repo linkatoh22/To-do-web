@@ -58,11 +58,21 @@ const UploadArea = styled(Paper)(({ theme }) => ({
 
 export function AddGroupDialog({TaskData,open,onClose,onSuccess}){
     const {loading} = useSelector(s=>s.group)
+
     const [formData, setFormData] = useState({
             name: "",
             description: "",
             image: undefined
           })
+
+    useEffect(()=>{
+        setFormData({
+            name: "",
+            description: "",
+            image: undefined
+          })
+
+    },[open])
     const [dragOver, setDragOver] = useState(false)
     const [isChange, setIsChange] = useState(false)
     const handleDragOver = (e) => {
@@ -138,6 +148,15 @@ export function AddGroupDialog({TaskData,open,onClose,onSuccess}){
         
         
     }
+
+
+    useEffect(() => {
+            document.body.style.cursor = loading ? "wait" : "default";
+            return () => {
+                document.body.style.cursor = "default";
+            };
+        }, [loading]);
+    
     return(
         <Dialog 
             open={open}
@@ -296,7 +315,7 @@ export function AddGroupDialog({TaskData,open,onClose,onSuccess}){
                                         }}
                                         variant="contained"
                                         >
-                                        Thêm Group
+                                        {loading ? "Đang xử lý" :"Thêm Nhóm Công Việc"}
                                     </Button>
                                 </Grid>
 

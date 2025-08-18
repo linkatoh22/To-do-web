@@ -64,6 +64,14 @@ export function ChangePasswordForm({setIsSuccess}) {
            
         
       }
+
+
+      useEffect(() => {
+                  document.body.style.cursor = loading ? "wait" : "default";
+                  return () => {
+                      document.body.style.cursor = "default";
+                  };
+              }, [loading]);
       
     return (
         <Box sx={{
@@ -207,7 +215,7 @@ export function ChangePasswordForm({setIsSuccess}) {
                         }}
                         variant="contained"
                         >
-                        Xác nhận
+                        {loading? "Đang xử lý....":"Xác nhận"}
                     </Button>
 
 

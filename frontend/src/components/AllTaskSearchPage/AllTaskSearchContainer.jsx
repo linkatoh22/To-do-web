@@ -101,7 +101,7 @@ export function AllTaskSearchContainer(){
     
     return(
         <Box sx={{p: 5}}>
-            <Typography variant="h5" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E"}}>Nhóm của bạn</Typography>
+            <Typography variant="h5" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E", display:"inline-block"}}>Kết quả tìm kiếm</Typography>
          <Box sx={{display:"flex",gap:2}}>
             
 

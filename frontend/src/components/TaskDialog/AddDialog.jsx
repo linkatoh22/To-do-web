@@ -59,6 +59,7 @@ export function AddDialog({open,onClose,onSuccess}){
     const [isChange,setIsChange] = useState(false)
     const dispatch = useDispatch();
     const {AllGroup,loading} =useSelector(s=>s.group) 
+    const {loading:TaskLoading} =useSelector(s=>s.task) 
    
 
     
@@ -165,6 +166,12 @@ export function AddDialog({open,onClose,onSuccess}){
     };
     
 
+    useEffect(() => {
+        document.body.style.cursor = (loading || TaskLoading) ? "wait" : "default";
+        return () => {
+            document.body.style.cursor = "default";
+        };
+    }, [TaskLoading,loading]);
 
     return(
         <Dialog 
@@ -423,7 +430,7 @@ export function AddDialog({open,onClose,onSuccess}){
                                 <Grid item sx={{ xs: 12, md: 6 }}>
                                     <Button
                                     
-                                        disabled={!isChange ||loading}
+                                        disabled={!isChange ||(loading || TaskLoading)}
                                         type="submit"
                                         sx={{
                                             
@@ -440,7 +447,7 @@ export function AddDialog({open,onClose,onSuccess}){
                                         }}
                                         variant="contained"
                                         >
-                                        Thêm Task
+                                        {(loading || TaskLoading) ? "Đang xử lý" :"Thêm Công Việc"}
                                     </Button>
                                 </Grid>
 

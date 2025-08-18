@@ -5,7 +5,7 @@ import { Person, PersonOutline, AlternateEmail, Lock, Visibility, VisibilityOff 
 import LockOutlineIcon from '@mui/icons-material/LockOutline';
 import { GoogleSVG } from "../../assets/svg/googleSvg";
 import BadgeIcon from '@mui/icons-material/Badge';
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import {fetchLogin} from "../../redux/thunk/authThunk";
 import { useDispatch,useSelector } from "react-redux";
@@ -70,6 +70,13 @@ export function LogInForm() {
         window.location.href = `${BASE_URL}/api/auth/google`;
       }
 
+
+      useEffect(() => {
+                  document.body.style.cursor = loading ? "wait" : "default";
+                  return () => {
+                      document.body.style.cursor = "default";
+                  };
+              }, [loading]);
 
     return (
         <Box sx={{
@@ -258,6 +265,24 @@ export function LogInForm() {
                             lg: "left",   // large desktop
                           },
                          }}> Đã có tài khoản? <Link href="/dang-ky">Đăng ký</Link> ngay</Typography>
+
+
+                     <Typography sx={
+                    { 
+                        
+                        fontSize: {
+                          xs: "0.95rem", // mobile
+                          sm: "1.1  rem",   // tablet
+                          md: "1.15rem", // desktop
+                          lg: "1.15rem",   // large desktop
+                        },
+                        textAlign:{
+                            xs: "center", // mobile
+                            sm: "center",   // tablet
+                            md: "left", // desktop
+                            lg: "left",   // large desktop
+                          },
+                         }}> Quên mật khẩu? <Link href="/quen-mat-khau">Đổi mật khẩu</Link> </Typography>
 
                 </Box>
                 </form>

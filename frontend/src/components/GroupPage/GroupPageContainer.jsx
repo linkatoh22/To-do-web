@@ -51,6 +51,16 @@ export function GroupPageContainer(){
         await dispatch(fetchAllGroup())
     }
 
+
+    useEffect(() => {
+                document.body.style.cursor = (loading ) ? "wait" : "default";
+                return () => {
+                    document.body.style.cursor = "default";
+                };
+            }, [loading]);
+
+
+
     return (
         <>
         <Box sx={{p:3}}>
@@ -82,7 +92,7 @@ export function GroupPageContainer(){
                             {
                                 allGroupRender?.length > 0
                                     ? allGroupRender.map((item) => (
-                                        <Grid item size={{ xs: 2, sm: 4, md: 3 }}  style={{ display: "flex" }}>
+                                        <Grid item size={{ xs: 2, sm: 2, md: 2 }}  style={{ display: "flex" }}>
                                             <GroupCard groupData ={item} refetch={refetch}></GroupCard>
                                         </Grid>
                                     ))

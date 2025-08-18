@@ -87,6 +87,15 @@ export function OtpVerifyForm() {
         }
         
       }
+
+      useEffect(() => {
+            document.body.style.cursor = loading ? "wait" : "default";
+            return () => {
+                document.body.style.cursor = "default";
+            };
+        }, [loading]);
+
+
     return (
         <Box sx={{
             width: { xs: "70%", sm: "70%", md: "60%",lg: "40%" },
@@ -225,7 +234,7 @@ export function OtpVerifyForm() {
                             },
                             }}> 
                             
-                            Không nhận được OTP? <Link onClick={()=>handleResend()}>Gửi lại OTP</Link> ngay</Typography>
+                            Không nhận được OTP? <Link onClick={()=>handleResend()} style={{cursor:"pointer"}}>Gửi lại OTP</Link> ngay</Typography>
                         )}
                     </Box>
                 </form>

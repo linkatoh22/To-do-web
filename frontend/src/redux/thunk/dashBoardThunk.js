@@ -7,7 +7,7 @@ export const fetchAllTask = createAsyncThunk(
         try{
 
             const response = await DashboardApi.fetchAllTask();
-            console.log("DATA NE: ",response.data)
+            
             return response.data;
 
         }

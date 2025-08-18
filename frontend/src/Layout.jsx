@@ -89,8 +89,9 @@ export default function RootLayout(){
                             flexGrow: 1,
                             backgroundColor: "#f5f5f5",
                             overflow: "auto",
+                            
                             marginTop: "80px", // Account for fixed header height
-                            minHeight: "calc(100vh - 64px)",
+                            // minHeight: "calc(100vh - 64px)",
                         }}
                     >
                         <Outlet />

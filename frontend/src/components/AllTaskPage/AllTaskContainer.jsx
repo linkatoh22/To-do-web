@@ -97,7 +97,7 @@ export function AllTaskContainer(){
     
     return(
         <Box sx={{p: 5}}>
-            <Typography variant="h5" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E",display: "inline-block"}}>Nhóm của bạn</Typography>
+            <Typography variant="h5" sx={{fontWeight:600,mb:2,borderBottom:"3px solid #F24E1E",display: "inline-block"}}>Công việc của bạn</Typography>
          <Box sx={{display:"flex",gap:2}}>
             
 
@@ -221,7 +221,7 @@ export function AllTaskContainer(){
                                                 {taskSortRender[taskSelected]?.Name}
                                             </Typography>
                                             <Box pt={1}>
-                                                <Typography>Nhóm: {taskSortRender[taskSelected]?.Group.Name?? "Chưa cập nhập"}</Typography>
+                                                <Typography>Nhóm: {taskSortRender[taskSelected]?.Group?.Name?? "Chưa cập nhập"}</Typography>
                                                 <Typography>Ưu tiên: {taskSortRender[taskSelected]?.Priority ?? "Chưa cập nhập"}</Typography>
                                                 <Typography>Trạng thái: {taskSortRender[taskSelected]?.Status?? "Chưa cập nhập"}</Typography>
                                                 <Typography>Ngày bắt đầu: {dateConvert(taskSortRender[taskSelected]?.StartDate)}
