@@ -58,7 +58,8 @@ export function SignUpForm() {
             navigate(`/xac-thuc-otp/${tokenOtp}`);
 
         } else {
-            console.error("Lỗi đăng ký:", response?.payload?.message);
+           
+            toast.error(`Lỗi: ${response?.payload?.message}`);
         }
         
 
