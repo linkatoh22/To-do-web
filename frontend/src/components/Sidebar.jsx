@@ -53,7 +53,8 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
   const [activeItem, setActiveItem] = useState("dashboard")
   const isMobile = useIsMobile()
 
-
+  const storedUsername = localStorage.getItem("username")?? "Chưa cập nhập";
+  const storedEmail = localStorage.getItem("email")?? "Chưa cập nhập";
 
   const handleLogout = async ()=>{
     
@@ -154,7 +155,7 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
                 fontSize: { xs: "1.1rem", sm: "1.25rem" },
               }}
             >
-              {username??"Chưa cập nhập"}
+              {storedUsername??"Chưa cập nhập"}
             </Typography>
             <Typography
               variant="body2"
@@ -163,7 +164,7 @@ export default function SidebarNavigation({ isCollapsed, onToggleCollapse, isMob
                 fontSize: { xs: "0.8rem", sm: "0.875rem" },
               }}
             >
-             {email??"Chưa cập nhập"}
+             {storedEmail??"Chưa cập nhập"}
             </Typography>
           </>
         )}
