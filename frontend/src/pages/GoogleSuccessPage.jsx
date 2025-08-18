@@ -7,6 +7,8 @@ import { AuthContext } from "../context/authContext";
 export default function GoogleSuccessPage(){
     const params = new URLSearchParams(window.location.search);
     const accessToken = params.get("accessToken");
+    const username = params.get("username");
+    const email = params.get("email");
     const {login}  = useContext(AuthContext);
     
     const navigate = useNavigate();
@@ -15,7 +17,7 @@ export default function GoogleSuccessPage(){
         
         if(accessToken){
             toast.success("Đăng nhập thành công")
-            login(accessToken)
+            login(accessToken,{username,email})
             navigate("/")
         }
 

@@ -220,7 +220,7 @@ export function AllTaskSearchContainer(){
                                                 {taskSortRender[taskSelected]?.Name}
                                             </Typography>
                                             <Box pt={1}>
-                                                <Typography>Nhóm: {taskSortRender[taskSelected]?.Group.Name?? "Chưa cập nhập"}</Typography>
+                                                <Typography>Nhóm: {taskSortRender[taskSelected]?.Group?.Name?? "Chưa cập nhập"}</Typography>
                                                 <Typography>Ưu tiên: {taskSortRender[taskSelected]?.Priority ?? "Chưa cập nhập"}</Typography>
                                                 <Typography>Trạng thái: {taskSortRender[taskSelected]?.Status?? "Chưa cập nhập"}</Typography>
                                                 <Typography>Ngày bắt đầu: {dateConvert(taskSortRender[taskSelected]?.StartDate)}

@@ -9,15 +9,21 @@ export function AuthProvider ({children}){
 
     const login = (token,{username,email}) =>{
         setAccessToken(token);
-        localStorage.setItem('accessToken',token)
-        
         setUsername(username)
         setEmail(email)
+        localStorage.setItem('accessToken',token)
+        localStorage.setItem('username',username)
+        localStorage.setItem('email',email)
+        
     }
 
     const logout = ()=>{
         setAccessToken(null);
+        setUsername(null)
+        setEmail(null)
         localStorage.removeItem('accessToken')
+        localStorage.removeItem('username')
+        localStorage.removeItem('email')
     }
 
     useEffect(() => {
