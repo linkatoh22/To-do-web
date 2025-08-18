@@ -114,8 +114,9 @@ export function AddDialog({open,onClose,onSuccess}){
         
         if (response?.payload?.status == "Success") {
             toast.success("Thêm task thành công.")
-            onSuccess();
             onClose();
+            onSuccess();
+            
 
         } else {
             toast.error("Lỗi: " + response?.payload?.message);
@@ -123,6 +124,17 @@ export function AddDialog({open,onClose,onSuccess}){
     }
 
 
+    const handleCloseWhileEdit = ()=>{
+        if(isChange){
+            let userChoice = confirm("Bạn có chắc muốn hủy tạo công việc?");
+            if (userChoice) {
+                onClose();
+                
+            } 
+        }
+        else onClose();
+        
+    }
     //UPLOAD PIC
     const [dragOver, setDragOver] = useState(false)
 
@@ -176,7 +188,7 @@ export function AddDialog({open,onClose,onSuccess}){
     return(
         <Dialog 
             open={open}
-            onClose={onClose}
+            onClose={handleCloseWhileEdit}
             fullWidth maxWidth="lg"
             >
             
@@ -186,7 +198,7 @@ export function AddDialog({open,onClose,onSuccess}){
 
             <IconButton
             aria-label="close"
-            onClick={onClose}
+            onClick={handleCloseWhileEdit}
             sx={(theme) => ({
                 position: 'absolute',
                 right: 8,

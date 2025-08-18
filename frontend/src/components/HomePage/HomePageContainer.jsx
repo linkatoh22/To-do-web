@@ -109,6 +109,26 @@ export function HomePageContainer(){
                         {/* Thêm task mới */}
                     <Paper elevation={2} sx={{p:2,height:"71vh",width:"50%"}}>
 
+                        <Box sx={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+
+                                <Typography variant="h6" sx={{fontWeight:600,display:"flex", alignItems:"center",color:"#F24E1E",gap:1}}>
+                                    <ReorderIcon sx={{color:"#A1A3AB",fontSize:"1.7rem"}}></ReorderIcon>
+
+                                    <Box>Việc cần làm</Box>
+                                </Typography>
+
+
+                                <Typography variant="h6" sx={{fontWeight:600,display:"flex", alignItems:"center",cursor:"pointer",gap:1}} onClick={handleClickOpen}>
+                                        <AddIcon sx={{color:"#F24E1E",fontSize:"1.7rem"}}></AddIcon>
+                                            <Box>  Thêm công việc mới</Box>
+                                </Typography>
+                            
+
+                            
+
+                        </Box>
+
+
                         {loading?
                         
                         <Box sx={{width:"100%",height:"100%",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",gap:2}}>
@@ -120,43 +140,26 @@ export function HomePageContainer(){
                         :
                         <>
 
-                            <Box sx={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
-
-                            <Typography variant="h6" sx={{fontWeight:600,display:"flex", alignItems:"center",color:"#F24E1E",gap:1}}>
-                                <ReorderIcon sx={{color:"#A1A3AB",fontSize:"1.7rem"}}></ReorderIcon>
-
-                                <Box>Việc cần làm</Box>
-                            </Typography>
-
-
-                            <Typography variant="h6" sx={{fontWeight:600,display:"flex", alignItems:"center",cursor:"pointer",gap:1}} onClick={handleClickOpen}>
-                                    <AddIcon sx={{color:"#F24E1E",fontSize:"1.7rem"}}></AddIcon>
-                                        <Box>  Thêm công việc mới</Box>
-                            </Typography>
                             
 
-                            
+                            <Box sx={{display:"flex",flexDirection:"column",gap:2,height:"95%",py:2}}> 
+                                {
+                                    AllTaskDeadline?.length > 0
+                                        ? AllTaskDeadline.map((item) => (
+                                            <TaskCard TaskData={item} key={item.id} />
+                                        ))
+                                        : 
+                                        <Box sx={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                                            <BrowserNotSupportedIcon></BrowserNotSupportedIcon>
+                                            <Typography>
+                                            Không có dữ liệu hiển thị. Bạn vui lòng hãy thêm công việc mới nhé!
+                                            </Typography>
+                                        </Box>
+                                }
+                                
+                                
 
-                        </Box>
-
-                        <Box sx={{display:"flex",flexDirection:"column",gap:2,height:"95%",py:2}}> 
-                            {
-                                AllTaskDeadline?.length > 0
-                                    ? AllTaskDeadline.map((item) => (
-                                        <TaskCard TaskData={item} key={item.id} />
-                                    ))
-                                    : 
-                                    <Box sx={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                                        <BrowserNotSupportedIcon></BrowserNotSupportedIcon>
-                                        <Typography>
-                                        Không có dữ liệu hiển thị. Bạn vui lòng hãy thêm công việc mới nhé!
-                                        </Typography>
-                                    </Box>
-                            }
-                            
-                            
-
-                        </Box>
+                            </Box>
                         </>
                     
                         }

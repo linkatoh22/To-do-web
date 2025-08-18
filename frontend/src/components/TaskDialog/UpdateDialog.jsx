@@ -126,8 +126,9 @@ export function UpdateDialog({TaskData,open,onClose,onSuccess}){
            
         if (response?.payload?.status == "Success") {
             toast.success("Chỉnh sửa task thành công.")
-            onSuccess();
             onClose();
+            onSuccess();
+            
 
         } else {
             toast.error("Lỗi: " + response?.payload?.message);
@@ -183,11 +184,23 @@ export function UpdateDialog({TaskData,open,onClose,onSuccess}){
                 document.body.style.cursor = "default";
             };
         }, [TaskLoading,loading]);
+    
 
+    const handleCloseWhileEdit = ()=>{
+        if(isChange){
+            let userChoice = confirm("Bạn có chắc muốn hủy tạo công việc?");
+            if (userChoice) {
+                onClose();
+                
+            } 
+        }
+        else onClose();
+        
+    }
     return(
         <Dialog 
             open={open}
-            onClose={onClose}
+            onClose={handleCloseWhileEdit}
             fullWidth maxWidth="lg"
             >
             
@@ -197,7 +210,7 @@ export function UpdateDialog({TaskData,open,onClose,onSuccess}){
 
             <IconButton
             aria-label="close"
-            onClick={onClose}
+            onClick={handleCloseWhileEdit}
             sx={(theme) => ({
                 position: 'absolute',
                 right: 8,

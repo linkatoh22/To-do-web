@@ -139,8 +139,9 @@ export function AddGroupDialog({TaskData,open,onClose,onSuccess}){
         
         if (response?.payload?.status == "Success") {
             toast.success("Thêm Nhóm Công Việc thành công.")
-            onSuccess();
             onClose();
+            onSuccess();
+            
 
         } else {
             toast.error("Lỗi: " + response?.payload?.message);
@@ -157,10 +158,23 @@ export function AddGroupDialog({TaskData,open,onClose,onSuccess}){
             };
         }, [loading]);
     
+
+
+    const handleCloseWhileEdit = ()=>{
+        if(isChange){
+            let userChoice = confirm("Bạn có chắc muốn hủy tạo công việc?");
+            if (userChoice) {
+                onClose();
+                
+            } 
+        }
+        else onClose();
+        
+    }
     return(
         <Dialog 
             open={open}
-            onClose={onClose}
+            onClose={handleCloseWhileEdit}
             fullWidth maxWidth="lg"
             >
             
@@ -170,7 +184,7 @@ export function AddGroupDialog({TaskData,open,onClose,onSuccess}){
 
             <IconButton
             aria-label="close"
-            onClick={onClose}
+            onClick={handleCloseWhileEdit}
             sx={(theme) => ({
                 position: 'absolute',
                 right: 8,
