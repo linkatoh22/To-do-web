@@ -24,7 +24,7 @@ npm run dev
 ```bash
 cd backend
 npm install
-nodemon index.js
+npm run dev
 ```
 ## 3. Dependencies:
 **1. Frontend:**
